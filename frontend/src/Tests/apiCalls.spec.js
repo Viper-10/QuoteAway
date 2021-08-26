@@ -1,6 +1,6 @@
 import { assertOptionalCallExpression } from "@babel/types";
 import axios from "axios";
-import * as apiCalls from "./apiCalls";
+import * as apiCalls from "../ApiRequests/apiCalls";
 
 describe("apicalls", () => {
   describe("signup", () => {

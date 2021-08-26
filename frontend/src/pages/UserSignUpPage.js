@@ -1,6 +1,7 @@
 import React from "react";
 import InputBox from "../components/InputBox";
 import Button from "../components/Button";
+import * as apiCalls from "../ApiRequests/apiCalls";
 
 export class UserSignUpPage extends React.Component {
   state = {
@@ -108,6 +109,8 @@ UserSignUpPage.defaultProps = {
       new Promise((resolve, reject) => {
         resolve({});
       }),
+
+    // postSignup: () => apiCalls.signup(),
   },
 };
 
