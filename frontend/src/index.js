@@ -1,15 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import {UserSignUpPage} from './pages/UserSignUpPage';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { UserSignUpPage } from "./pages/UserSignUpPage";
+import * as apiCalls from "./ApiRequests/apiCalls";
+
+const actions = {
+  postSignUp: apiCalls.signup,
+};
 
 ReactDOM.render(
   <React.StrictMode>
-    <UserSignUpPage />
+    <UserSignUpPage actions={actions} />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

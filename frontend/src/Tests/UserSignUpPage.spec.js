@@ -115,13 +115,13 @@ describe("UserSignUpPage_tests", () => {
 
   it("calls postSignup when the fields are valid and the actions are provided in props", () => {
     const actions = {
-      postSignup: jest.fn().mockResolvedValueOnce({}),
+      postSignUp: jest.fn().mockResolvedValueOnce({}),
     };
 
     setUpForSubmit({ actions });
     fireEvent.click(button);
 
-    expect(actions.postSignup).toHaveBeenCalledTimes(1);
+    expect(actions.postSignUp).toHaveBeenCalledTimes(1);
   });
   it("does not throw exception when clicking the button without providing actions property", () => {
     setUpForSubmit();
@@ -130,7 +130,7 @@ describe("UserSignUpPage_tests", () => {
 
   it("calls post with user body when the fields are valid", () => {
     const actions = {
-      postSignup: jest.fn().mockResolvedValueOnce({}),
+      postSignUp: jest.fn().mockResolvedValueOnce({}),
     };
 
     setUpForSubmit({ actions });
@@ -141,6 +141,6 @@ describe("UserSignUpPage_tests", () => {
       password: "P4ssword",
     };
 
-    expect(actions.postSignup).toHaveBeenCalledWith(expectedUserObject);
+    expect(actions.postSignUp).toHaveBeenCalledWith(expectedUserObject);
   });
 });

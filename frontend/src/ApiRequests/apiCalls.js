@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const signup = async (user) => {
+export const signup = (user) => {
   return axios.post("api/1.0/users", user);
 
   // const response = await fetch("api/1.0/users", {

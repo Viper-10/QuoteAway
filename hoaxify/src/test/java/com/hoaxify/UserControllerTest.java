@@ -35,7 +35,6 @@ public class UserControllerTest {
 	@Autowired
 	UserRepository userRepository;
 	
-	
 	public User createValidUser() {
 		User user = new User(); 
 		user.setUserName("priyadharshan");
@@ -88,6 +87,38 @@ public class UserControllerTest {
 		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
 		
 		assertThat(response.getBody().getMessage()).isNotNull();
+	}
+	
+	@Test
+	public void postUser_whereUserHasNullDisplayName_receiveBadRequest() {
+		
+		User user = createValidUser();
+		user.setDisplayName(null);
+		
+		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
+		
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	
+	@Test
+	public void postUser_whereUserHasNullUserName_receiveBadRequest() {
+		
+		User user = createValidUser();
+		user.setUserName(null);
+		
+		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
+		
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	@Test
+	public void postUser_whereUserHasNullPassword_receiveBadRequest() {
+		
+		User user = createValidUser();
+		user.setPassword(null);
+		
+		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
+		
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 	

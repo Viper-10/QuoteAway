@@ -1,6 +1,4 @@
 import React from "react";
-import InputBox from "../components/InputBox";
-import Button from "../components/Button";
 import * as apiCalls from "../ApiRequests/apiCalls";
 
 export class UserSignUpPage extends React.Component {
@@ -9,6 +7,7 @@ export class UserSignUpPage extends React.Component {
     userName: "",
     password: "",
     reTypedPassword: "",
+    pendingApiSubmitCall: false,
   };
 
   onChangeDisplayName = (e) => {
@@ -33,8 +32,17 @@ export class UserSignUpPage extends React.Component {
       password: this.state.password,
     };
 
+    this.setState({ pendingApiSubmitCall: true });
+
     if (this.props.actions) {
-      this.props.actions.postSignup(user);
+      this.props.actions
+        .postSignUp(user)
+        .then((response) => {
+          this.setState({ pendingApiSubmitCall: false });
+        })
+        .catch((error) => {
+          this.setState({ pendingApiSubmitCall: false });
+        });
     }
   };
 
@@ -85,33 +93,26 @@ export class UserSignUpPage extends React.Component {
         </div>
 
         <div className="text-center">
-          <button className="btn btn-primary" onClick={this.onClickSignUp}>
+          <button
+            className="btn btn-primary"
+            onClick={this.onClickSignUp}
+            disabled={this.state.pendingApiSubmitCall}
+          >
+            {this.state.pendingApiSubmitCall && (
+              <div className="spinner-border text-light spinner-border-sm mr-1 "></div>
+            )}
             Sign up
           </button>
         </div>
-
-        {/* <InputBox placeholderText="Your display name" />
-        <InputBox placeholderText="Your Username" />
-        <InputBox inputType="password" placeholderText="Your Password" />
-        <InputBox
-          inputType="password"
-          placeholderText="Confirm Your Password"
-        />
-        <Button /> */}
       </div>
     );
   }
 }
 
-UserSignUpPage.defaultProps = {
-  actions: {
-    postSignup: () =>
-      new Promise((resolve, reject) => {
-        resolve({});
-      }),
-
-    // postSignup: () => apiCalls.signup(),
-  },
-};
+// UserSignUpPage.defaultProps = {
+//   actions: {
+//     postSignUp: apiCalls.signup,
+//   },
+// };
 
 export default UserSignUpPage;
