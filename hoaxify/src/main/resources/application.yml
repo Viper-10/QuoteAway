@@ -5,3 +5,9 @@ spring :
             console : 
                     enabled : true
                     
+        jpa :
+         properties :
+           javax : 
+              persistence : 
+                validation : 
+                  mode : none  

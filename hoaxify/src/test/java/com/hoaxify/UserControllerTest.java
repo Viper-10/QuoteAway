@@ -3,9 +3,7 @@ package com.hoaxify;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -18,9 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.hoaxify.entities.User;
-import com.hoaxify.repositories.UserRepository;
 import com.hoaxify.shared.GenericResponse;
+import com.hoaxify.users.User;
+import com.hoaxify.users.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -28,7 +26,7 @@ import com.hoaxify.shared.GenericResponse;
 public class UserControllerTest {
 	
 	private static final String API_1_0_USERS = "/api/1.0/users";
-
+	
 	@Autowired
 	TestRestTemplate testRestTemplate; 
 	
@@ -39,11 +37,16 @@ public class UserControllerTest {
 		User user = new User(); 
 		user.setUserName("priyadharshan");
 		user.setDisplayName("KdPink");
-		user.setPassword("p4ssword");
+		user.setPassword("P4ssword");
 		
 		return user; 
 	}
-
+	
+	public ResponseEntity<Object> postSignUp(){
+		User user = createValidUser(); 
+		ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+		return response; 
+	}
 	
 	// executes before each test case. 
 	// junit 5 equivalent of @before in Junit previous versions. 
@@ -61,7 +64,18 @@ public class UserControllerTest {
 		ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
 		
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		
 	}
+	
+	@Test 
+	public void postUser_WhenAnotherUser_AlreadyExistsOfSameUserName() {
+		User user1 = createValidUser(); 
+		User user2 = createValidUser(); 
+		
+		testRestTemplate.postForEntity(API_1_0_USERS, user1, Object.class); 
+		assertThat(testRestTemplate.postForEntity(API_1_0_USERS, user2, Object.class).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);  
+	}
+	
 	@Test
 	public void postUser_WhenUserIs_passwordIsHashedInDatabase() {
 		
@@ -124,11 +138,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void postUser_WhenUserIsValid_saveToDatabase() {		
-		
-		User user = createValidUser(); 
-		
-		ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
-		
+		postSignUp(); 
 		assertThat(userRepository.count()).isEqualTo(1); 	
 	}
 	

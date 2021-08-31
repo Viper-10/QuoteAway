@@ -1,28 +1,64 @@
 import React from "react";
 import * as apiCalls from "../ApiRequests/apiCalls";
+import Input from "../components/Input";
 
 export class UserSignUpPage extends React.Component {
   state = {
     displayName: "",
     userName: "",
     password: "",
-    reTypedPassword: "",
+    confirmPassword: "",
     pendingApiSubmitCall: false,
+    errors: {},
+    passwordRepeatConfirmed: true,
   };
 
   onChangeDisplayName = (e) => {
-    this.setState({ displayName: e.target.value });
+    const value = e.target.value;
+    const errors = { ...this.state.errors };
+    delete errors.displayName;
+
+    this.setState({ displayName: e.target.value, errors });
   };
 
   onChangeUserName = (e) => {
-    this.setState({ userName: e.target.value });
+    const value = e.target.value;
+    const errors = { ...this.state.errors };
+    delete errors.userName;
+
+    this.setState({ userName: e.target.value, errors });
   };
 
   onChangePassword = (e) => {
-    this.setState({ password: e.target.value });
+    const value = e.target.value;
+    const errors = { ...this.state.errors };
+    delete errors.password;
+
+    let passwordRepeatConfirmed = this.state.confirmPassword === value;
+    errors.confirmPassword = passwordRepeatConfirmed
+      ? ""
+      : "Does not match to password";
+    this.setState({
+      password: value,
+      passwordRepeatConfirmed,
+      errors,
+    });
   };
   onChangeConfirmPassword = (e) => {
-    this.setState({ reTypedPassword: e.target.value });
+    const value = e.target.value;
+
+    let passwordRepeatConfirmed = this.state.password === value;
+    const errors = { ...this.state.errors };
+
+    errors.confirmPassword = passwordRepeatConfirmed
+      ? ""
+      : "Does not match to password";
+
+    this.setState({
+      confirmPassword: value,
+      passwordRepeatConfirmed,
+      errors,
+    });
   };
 
   onClickSignUp = (e) => {
@@ -40,8 +76,18 @@ export class UserSignUpPage extends React.Component {
         .then((response) => {
           this.setState({ pendingApiSubmitCall: false });
         })
-        .catch((error) => {
-          this.setState({ pendingApiSubmitCall: false });
+        .catch((apiError) => {
+          let errors = { ...this.state.errors };
+          // validationErros is the name that we have given in the backend
+          // for errors regarding validation errors such as
+          // not having symbol in password, username being less than 4 letters
+          if (
+            apiError.response.data &&
+            apiError.response.data.validationErrors
+          ) {
+            errors = { ...apiError.response.data.validationErrors };
+          }
+          this.setState({ pendingApiSubmitCall: false, errors: errors });
         });
     }
   };
@@ -50,53 +96,68 @@ export class UserSignUpPage extends React.Component {
     return (
       <div className="container">
         <h3 className="text-center">Sign Up</h3>
-
-        <div className="col-12 mb-3">
-          <label>Display Name</label>
+        <div className="col-12 mb-3 ">
+          {/* <label>Displayname</label>
           <input
-            className="form-control"
+            className="form-control is-invalid"
             type="text"
             placeholder="Your display name"
             value={this.state.displayName}
             onChange={this.onChangeDisplayName}
           ></input>
+          <div className="invalid-feedback">
+            {this.state.errors.displayName}
+          </div> */}
+          <Input
+            label="Displayname"
+            placeholder="Your display name"
+            value={this.state.displayName}
+            onChange={this.onChangeDisplayName}
+            hasError={this.state.errors.displayName && true}
+            errorMessage={this.state.errors.displayName}
+          />
         </div>
         <div className="col-12 mb-3">
-          <label>User Name</label>
-          <input
-            className="form-control"
-            type="text"
+          <Input
+            label="Username"
             value={this.state.userName}
             onChange={this.onChangeUserName}
             placeholder="Your username"
-          ></input>
+            hasError={this.state.errors.userName && true}
+            errorMessage={this.state.errors.userName}
+          />
         </div>
         <div className="col-12 mb-3">
-          <label>Password</label>
-          <input
-            className="form-control"
+          <Input
+            label="Password"
             type="password"
             placeholder="Your password"
             value={this.password}
             onChange={this.onChangePassword}
-          ></input>
+            hasError={this.state.errors.password && true}
+            errorMessage={this.state.errors.password}
+          />
         </div>
         <div className="col-12 mb-3">
-          <label>Confirm Password</label>
-          <input
-            className="form-control"
+          <Input
+            label="Confirm Password"
             type="password"
             placeholder="Confirm your password"
-            value={this.reTypedPassword}
+            value={this.confirmPassword}
             onChange={this.onChangeConfirmPassword}
-          ></input>
+            hasError={this.state.errors.confirmPassword && true}
+            errorMessage={this.state.errors.confirmPassword}
+          />
         </div>
 
         <div className="text-center">
           <button
             className="btn btn-primary"
             onClick={this.onClickSignUp}
-            disabled={this.state.pendingApiSubmitCall}
+            disabled={
+              this.state.pendingApiSubmitCall ||
+              !this.state.passwordRepeatConfirmed
+            }
           >
             {this.state.pendingApiSubmitCall && (
               <div className="spinner-border text-light spinner-border-sm mr-1 "></div>

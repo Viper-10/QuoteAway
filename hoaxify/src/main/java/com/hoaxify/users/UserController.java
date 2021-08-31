@@ -1,4 +1,4 @@
-package com.hoaxify.controllers;
+package com.hoaxify.users;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,16 +12,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hoaxify.entities.User;
 import com.hoaxify.error.ApiError;
-import com.hoaxify.exceptions.UserNotValidException;
-import com.hoaxify.services.UserService;
 import com.hoaxify.shared.GenericResponse;
 
 @RestController
@@ -55,7 +51,6 @@ public class UserController {
 	public GenericResponse createUser(@Valid @RequestBody User user) {
 		
 		userService.save(user);
-		
 		return new GenericResponse("User saved");
 	}
 	
@@ -75,7 +70,7 @@ public class UserController {
 		apiError.setValidationErrors(validationErrors);
 		
 		return apiError; 
-	}
+	}	
 	
 	
 }

@@ -1,9 +1,7 @@
-package com.hoaxify.repositories;
+package com.hoaxify.users;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.hoaxify.entities.User;
-
 public interface UserRepository extends JpaRepository<User, Long>{
-
+	User findByUserName(String username);
 }

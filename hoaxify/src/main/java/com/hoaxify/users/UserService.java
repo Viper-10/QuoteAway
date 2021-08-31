@@ -1,12 +1,9 @@
-package com.hoaxify.services;
+package com.hoaxify.users;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.hoaxify.entities.User;
-import com.hoaxify.repositories.UserRepository;
+import com.hoaxify.exceptions.DuplicateUsernameException;
 
 @Service
 public class UserService {
@@ -20,7 +17,11 @@ public class UserService {
 		this.userRepository = userRepository; 
 	}
 	
-	public User save(User user) {
+	public User save(User user) throws DuplicateUsernameException{
+//		if(userRepository.findByUserName(user.getUserName()) != null) {
+//			throw new DuplicateUsernameException(); 
+//		}
+//		
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	

@@ -1,5 +1,10 @@
-import React from "react";
-import { fireEvent, render } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  cleanup,
+  waitFor,
+  waitForElement,
+} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { UserSignUpPage } from "../pages/UserSignUpPage";
 import { isTSDeclareFunction } from "@babel/types";
@@ -111,36 +116,35 @@ describe("UserSignUpPage_tests", () => {
       );
       expect(confirmPasswordInput).toHaveValue("my-confirm-password");
     });
-  });
+    it("calls postSignup when the fields are valid and the actions are provided in props", () => {
+      const actions = {
+        postSignUp: jest.fn().mockResolvedValueOnce({}),
+      };
 
-  it("calls postSignup when the fields are valid and the actions are provided in props", () => {
-    const actions = {
-      postSignUp: jest.fn().mockResolvedValueOnce({}),
-    };
+      setUpForSubmit({ actions });
+      fireEvent.click(button);
 
-    setUpForSubmit({ actions });
-    fireEvent.click(button);
+      expect(actions.postSignUp).toHaveBeenCalledTimes(1);
+    });
+    it("does not throw exception when clicking the button without providing actions property", () => {
+      setUpForSubmit();
+      expect(() => fireEvent.click(button)).not.toThrow();
+    });
 
-    expect(actions.postSignUp).toHaveBeenCalledTimes(1);
-  });
-  it("does not throw exception when clicking the button without providing actions property", () => {
-    setUpForSubmit();
-    expect(() => fireEvent.click(button)).not.toThrow();
-  });
+    it("calls post with user body when the fields are valid", () => {
+      const actions = {
+        postSignUp: jest.fn().mockResolvedValueOnce({}),
+      };
 
-  it("calls post with user body when the fields are valid", () => {
-    const actions = {
-      postSignUp: jest.fn().mockResolvedValueOnce({}),
-    };
+      setUpForSubmit({ actions });
+      fireEvent.click(button);
+      const expectedUserObject = {
+        userName: "my-user-name",
+        displayName: "my-display-name",
+        password: "P4ssword",
+      };
 
-    setUpForSubmit({ actions });
-    fireEvent.click(button);
-    const expectedUserObject = {
-      userName: "my-user-name",
-      displayName: "my-display-name",
-      password: "P4ssword",
-    };
-
-    expect(actions.postSignUp).toHaveBeenCalledWith(expectedUserObject);
+      expect(actions.postSignUp).toHaveBeenCalledWith(expectedUserObject);
+    });
   });
 });
