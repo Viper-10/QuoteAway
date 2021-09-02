@@ -82,6 +82,7 @@ export class UserSignUpPage extends React.Component {
           // for errors regarding validation errors such as
           // not having symbol in password, username being less than 4 letters
           if (
+            apiError.response &&
             apiError.response.data &&
             apiError.response.data.validationErrors
           ) {

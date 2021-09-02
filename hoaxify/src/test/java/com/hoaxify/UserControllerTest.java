@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.hoaxify.shared.GenericResponse;
 import com.hoaxify.users.User;
 import com.hoaxify.users.UserRepository;
+import static com.hoaxify.TestUtil.createValidUser; 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -32,15 +33,6 @@ public class UserControllerTest {
 	
 	@Autowired
 	UserRepository userRepository;
-	
-	public User createValidUser() {
-		User user = new User(); 
-		user.setUserName("priyadharshan");
-		user.setDisplayName("KdPink");
-		user.setPassword("P4ssword");
-		
-		return user; 
-	}
 	
 	public ResponseEntity<Object> postSignUp(){
 		User user = createValidUser(); 
@@ -59,12 +51,8 @@ public class UserControllerTest {
 	@Test
 	public void postUser_WhenUserIsValid_receiveOK() {
 		
-		User user = createValidUser(); 
-		
-		ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
-		
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		
+		ResponseEntity<Object> postSignUp = postSignUp(); 		 
+		assertThat(postSignUp.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
 	
 	@Test 
@@ -138,8 +126,8 @@ public class UserControllerTest {
 	
 	@Test
 	public void postUser_WhenUserIsValid_saveToDatabase() {		
-		postSignUp(); 
-		assertThat(userRepository.count()).isEqualTo(1); 	
+		ResponseEntity<Object> postSignUp = postSignUp(); 
+		assertThat(userRepository.count()).isEqualTo(1); 
 	}
 	
 }
