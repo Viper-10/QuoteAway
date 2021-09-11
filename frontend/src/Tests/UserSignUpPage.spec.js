@@ -78,8 +78,8 @@ describe("UserSignUpPage_tests", () => {
 
     fireEvent.change(displayNameInput, changeEvent("my-display-name"));
     fireEvent.change(userNameInput, changeEvent("my-user-name"));
-    fireEvent.change(confirmPasswordInput, changeEvent("my-confirm-password"));
-    fireEvent.change(passwordInput, changeEvent("P4ssword"));
+    fireEvent.change(confirmPasswordInput, changeEvent("P4ssword$"));
+    fireEvent.change(passwordInput, changeEvent("P4ssword$"));
 
     button = container.querySelector("button");
 
@@ -141,9 +141,8 @@ describe("UserSignUpPage_tests", () => {
       const expectedUserObject = {
         userName: "my-user-name",
         displayName: "my-display-name",
-        password: "P4ssword",
+        password: "P4ssword$",
       };
-
       expect(actions.postSignUp).toHaveBeenCalledWith(expectedUserObject);
     });
   });

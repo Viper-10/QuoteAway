@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +46,7 @@ public class UserControllerTest {
 	@BeforeEach
 	public void clearUserDatabase() {
 		userRepository.deleteAll();
+		testRestTemplate.getRestTemplate().getInterceptors().clear();
 	}
 	
 	@Test
@@ -126,7 +127,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void postUser_WhenUserIsValid_saveToDatabase() {		
-		ResponseEntity<Object> postSignUp = postSignUp(); 
+		ResponseEntity<Object> response = postSignUp(); 
 		assertThat(userRepository.count()).isEqualTo(1); 
 	}
 	
