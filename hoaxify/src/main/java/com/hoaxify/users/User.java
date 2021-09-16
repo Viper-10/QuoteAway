@@ -16,6 +16,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import lombok.Data;
 
 @Data
@@ -25,6 +27,7 @@ public class User implements UserDetails{
 		
 	@Id
 	@GeneratedValue
+	@JsonView(UserViews.Base.class)
 	private long id; 
 	
 	/*
@@ -38,12 +41,14 @@ public class User implements UserDetails{
 	@NotBlank(message = "{hoaxify.user.contraints.username.NotBlank.message}")
 	@Size(min = 4, max = 255)
 	@UniqueUsername
+	@JsonView(UserViews.Base.class)
 	private String userName;
 	
 	@NotNull(message = "{hoaxify.user.constraints.displayname.NotNull.message}")
 	@NotEmpty(message = "{hoaxify.user.contraints.displayname.NotEmpty.message}")
 	@NotBlank(message = "{hoaxify.user.contraints.displayname.NotBlank.message}")
 	@Size(min = 4, max = 255)
+	@JsonView(UserViews.Base.class)
 	private String displayName;
 	
 	@NotNull(message = "{hoaxify.user.constraints.password.NotNull.message}")
@@ -52,6 +57,9 @@ public class User implements UserDetails{
 	@Size(min = 8, max = 255)
 	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message = "{hoaxify.user.contraints.password.NotMatchingPattern.message}")
 	private String password;
+	
+	@JsonView(UserViews.Base.class)
+	private String image;
 
 	@Override
 	@Transient

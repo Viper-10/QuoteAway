@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.hoaxify.error.ApiError;
 import com.hoaxify.shared.CurrentUser;
 
@@ -19,8 +20,9 @@ import com.hoaxify.shared.CurrentUser;
 public class LoginController {
 	
 	@PostMapping("/api/1.0/login")
-	public Map<String, Object> handleLogin(@CurrentUser User loggedInUser) {
-		return Collections.singletonMap("id", loggedInUser.getId());
+	@JsonView(UserViews.Base.class)
+	public User handleLogin(@CurrentUser User loggedInUser) {
+		return loggedInUser;
 	}
 	
 	

@@ -127,5 +127,37 @@ public class LoginControllerTest {
 	}
 	
 	
+	@Test
+	public void postLogin_withValidCredentials_receiveLoggedInUserImage() {
+		User user = TestUtil.createValidUser();
+		
+		User inDB = userService.save(user); 
+		authenticate(); 
+		
+		ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>(){});
+		
+		Map<String, Object> body = response.getBody(); 
+		
+		String image = (String)body.get("image");
+		
+		assertThat(image).isEqualTo(inDB.getImage());
+	}
+	@Test
+	public void postLogin_withValidCredentials_receiveLoggedInUserDisplayName() {
+		User user = TestUtil.createValidUser();
+		
+		User inDB = userService.save(user); 
+		authenticate(); 
+		
+		ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>(){});
+		
+		Map<String, Object> body = response.getBody(); 
+		
+		String displayName = (String)body.get("displayName");
+		
+		assertThat(displayName).isEqualTo(inDB.getDisplayName());
+	}
+	
+	
 	
 }
