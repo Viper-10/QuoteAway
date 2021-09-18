@@ -1,11 +1,13 @@
 import React from "react";
+import ButtonWithProgress from "../components/ButtonWithProgress";
 import Input from "../components/Input";
 
 export class LoginPage extends React.Component {
   state = {
     username: "",
     password: "",
-    apiError: "login failed",
+    apiError: undefined,
+    pendingApiCall: false,
   };
 
   onChangeUserName = (e) => {
@@ -23,15 +25,30 @@ export class LoginPage extends React.Component {
     });
   };
   onClickLogin = (e) => {
+    this.setState({ pendingApiCall: true });
     const body = {
       username: this.state.username,
       password: this.state.password,
     };
-    this.props.actions.postLogin(body).catch((error) => {
-      if (error.response) {
-        this.setState({ apiError: error.response.data.message });
-      }
-    });
+    this.props.actions
+      .postLogin(body)
+
+      // login succesful
+      .then(() => {
+        // first parameter is to change the state
+        // second parameter is to provide a callback(optional) called after setstate function
+        this.setState({ pendingApiCall: false }, () => {
+          this.props.history.push("/");
+        });
+      })
+
+      //login failure
+      .catch((error) => {
+        if (error.response) {
+          this.setState({ apiError: error.response.data.message });
+        }
+        this.setState({ pendingApiCall: false });
+      });
   };
   render() {
     let disableLogin = false;
@@ -64,13 +81,12 @@ export class LoginPage extends React.Component {
           </div>
         )}
         <div className="text-center">
-          <button
-            className="btn btn-primary"
+          <ButtonWithProgress
             onClick={this.onClickLogin}
-            disabled={disableLogin}
-          >
-            Login
-          </button>
+            disabled={disableLogin || this.state.pendingApiCall}
+            text="Login"
+            pendingApiCall={this.state.pendingApiCall}
+          />
         </div>
       </div>
     );

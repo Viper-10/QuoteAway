@@ -4,6 +4,7 @@ import {
   cleanup,
   waitFor,
   waitForElement,
+  waitForDomChange,
 } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { UserSignUpPage } from "../pages/UserSignUpPage";
@@ -144,6 +145,22 @@ describe("UserSignUpPage_tests", () => {
         password: "P4ssword$",
       };
       expect(actions.postSignUp).toHaveBeenCalledWith(expectedUserObject);
+    });
+    it("redirects to home page after successful signup", async () => {
+      const actions = {
+        postSignUp: jest.fn().mockResolvedValue({}),
+      };
+
+      const history = {
+        push: jest.fn(),
+      };
+
+      setUpForSubmit({ actions, history });
+      fireEvent.click(button);
+
+      await waitForDomChange();
+
+      expect(history.push).toHaveBeenCalledWith("/");
     });
   });
 });

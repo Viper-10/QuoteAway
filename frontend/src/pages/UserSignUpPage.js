@@ -1,7 +1,7 @@
 import React from "react";
 import * as apiCalls from "../ApiRequests/apiCalls";
 import Input from "../components/Input";
-
+import ButtonWithProgress from "../components/ButtonWithProgress";
 export class UserSignUpPage extends React.Component {
   state = {
     displayName: "",
@@ -74,7 +74,9 @@ export class UserSignUpPage extends React.Component {
       this.props.actions
         .postSignUp(user)
         .then((response) => {
-          this.setState({ pendingApiSubmitCall: false });
+          this.setState({ pendingApiSubmitCall: false }, () => {
+            this.props.history.push("/");
+          });
         })
         .catch((apiError) => {
           let errors = { ...this.state.errors };
@@ -152,19 +154,15 @@ export class UserSignUpPage extends React.Component {
         </div>
 
         <div className="text-center">
-          <button
-            className="btn btn-primary"
+          <ButtonWithProgress
             onClick={this.onClickSignUp}
             disabled={
               this.state.pendingApiSubmitCall ||
               !this.state.passwordRepeatConfirmed
             }
-          >
-            {this.state.pendingApiSubmitCall && (
-              <div className="spinner-border text-light spinner-border-sm mr-1 "></div>
-            )}
-            Sign up
-          </button>
+            text="Sign up"
+            pendingApiCall={this.state.pendingApiSubmitCall}
+          />
         </div>
       </div>
     );
