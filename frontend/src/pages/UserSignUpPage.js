@@ -89,8 +89,8 @@ export class UserSignUpPage extends React.Component {
             apiError.response.data.validationErrors
           ) {
             errors = { ...apiError.response.data.validationErrors };
+            this.setState({ pendingApiSubmitCall: false, errors: errors });
           }
-          this.setState({ pendingApiSubmitCall: false, errors: errors });
         });
     }
   };
