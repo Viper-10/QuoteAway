@@ -1,7 +1,7 @@
 import React from "react";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import Input from "../components/Input";
-
+import { connect } from "react-redux";
 export class LoginPage extends React.Component {
   state = {
     username: "",
@@ -34,8 +34,23 @@ export class LoginPage extends React.Component {
       .postLogin(body)
 
       // login succesful
-      .then(() => {
-        // first parameter is to change the state
+      .then((response) => {
+        // redux action to update the store
+
+        const action = {
+          type: "login-success",
+
+          // payload is the user object
+          payload: {
+            ...response.data,
+            // since we're not sending password as response in user view
+            // in backend, we provide it manually
+            password: this.state.password,
+          },
+        };
+
+        this.props.dispatch(action);
+        // In setState function, first parameter is to change the state
         // second parameter is to provide a callback(optional) called after setstate function
         this.setState({ pendingApiCall: false }, () => {
           this.props.history.push("/");
@@ -99,5 +114,6 @@ LoginPage.defaultProps = {
   history: {
     push: () => {},
   },
+  dispatch: () => {},
 };
-export default LoginPage;
+export default connect()(LoginPage);

@@ -28,18 +28,9 @@ In redux application we have one store and it is responsible for holding the
   when an action is dispatched to redux store, reducer is called. Reducer changes the state of the store according 
   to the action
 */
-const loggedInState = {
-  id: 1,
-  userName: "user1",
-  displayName: "display1",
-  image: "profile1.png",
-  isLoggedIn: true,
-  password: "P4ssword$",
-};
-
 // logger logs can be seen in the console in browser
 
-const store = createStore(authReducer, loggedInState, applyMiddleware(logger));
+const store = createStore(authReducer, applyMiddleware(logger));
 
 ReactDOM.render(
   // <React.StrictMode>
