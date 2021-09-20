@@ -76,6 +76,13 @@ export class UserSignUpPage extends React.Component {
         .then((response) => {
           this.setState({ pendingApiSubmitCall: false }, () => {
             this.props.history.push("/");
+            /* 
+              History is a part of the props provided by router
+              It has a function called push, accessed by 
+              this.props.history.push("url") in the PageComponent
+
+              It'll redirect to that url which has been pushed. 
+            */
           });
         })
         .catch((apiError) => {
@@ -89,8 +96,8 @@ export class UserSignUpPage extends React.Component {
             apiError.response.data.validationErrors
           ) {
             errors = { ...apiError.response.data.validationErrors };
-            this.setState({ pendingApiSubmitCall: false, errors: errors });
           }
+          this.setState({ pendingApiSubmitCall: false, errors: errors });
         });
     }
   };
@@ -169,10 +176,13 @@ export class UserSignUpPage extends React.Component {
   }
 }
 
-// UserSignUpPage.defaultProps = {
-//   actions: {
-//     postSignUp: apiCalls.signup,
-//   },
-// };
+UserSignUpPage.defaultProps = {
+  actions: {
+    postSignUp: apiCalls.signup,
+  },
+  history: {
+    push: () => {},
+  },
+};
 
 export default UserSignUpPage;

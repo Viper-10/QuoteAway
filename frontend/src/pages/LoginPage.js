@@ -96,5 +96,8 @@ LoginPage.defaultProps = {
   actions: {
     postLogin: () => new Promise((resolve, reject) => resolve({})),
   },
+  history: {
+    push: () => {},
+  },
 };
 export default LoginPage;

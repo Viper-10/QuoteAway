@@ -67,6 +67,10 @@ public class User implements UserDetails{
 		return AuthorityUtils.createAuthorityList("Role_USER");
 	}
 
+	// this is not the getter for UserName field in User class, but a method
+	// defined in UserDetails interface meant to be the getter for Username
+	// so we have to override it and return the username. 
+	
 	@Override
 	@Transient
 	public String getUsername() {
