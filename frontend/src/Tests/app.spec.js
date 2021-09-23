@@ -7,8 +7,7 @@ import {
   waitForElement,
 } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
-import authReducer from "../Redux/authReducer";
+import configureStore from "../Redux/configureStore";
 import axios from "axios";
 
 const defaultState = {
@@ -20,8 +19,19 @@ const defaultState = {
   password: "",
 };
 
+beforeEach(() => {
+  localStorage.clear();
+  delete axios.defaults.headers.common["Authorization"];
+});
+const changeEvent = (content) => {
+  return {
+    target: {
+      value: content,
+    },
+  };
+};
 const setup = (path) => {
-  const store = createStore(authReducer);
+  const store = configureStore(false);
   return render(
     <Provider store={store}>
       <MemoryRouter initialEntries={[path]}>
@@ -104,14 +114,6 @@ describe("App", () => {
   it("displays My Profile on topbar on succesful login", async () => {
     const { queryByPlaceholderText, container, queryByText } = setup("/login");
 
-    const changeEvent = (content) => {
-      return {
-        target: {
-          value: content,
-        },
-      };
-    };
-
     const userNameInput = queryByPlaceholderText("Your username");
     fireEvent.change(userNameInput, changeEvent("my-user-name"));
     const passwordInput = queryByPlaceholderText("Your password");
@@ -131,5 +133,157 @@ describe("App", () => {
 
     const myProfileLink = await waitForElement(() => queryByText("My Profile"));
     expect(myProfileLink).toBeInTheDocument();
+  });
+  it("displays My Profile on topbar on succesful sign up", async () => {
+    const { queryByPlaceholderText, container, queryByText } = setup("/signup");
+
+    const displayNameInput = queryByPlaceholderText("Your display name");
+    const userNameInput = queryByPlaceholderText("Your username");
+    const confirmPasswordInput = queryByPlaceholderText(
+      "Confirm your password"
+    );
+    const passwordInput = queryByPlaceholderText("Your password");
+
+    fireEvent.change(displayNameInput, changeEvent("my-display-name"));
+    fireEvent.change(userNameInput, changeEvent("my-user-name"));
+    fireEvent.change(confirmPasswordInput, changeEvent("P4ssword$"));
+    fireEvent.change(passwordInput, changeEvent("P4ssword$"));
+
+    const button = container.querySelector("button");
+    axios.post = jest
+      .fn()
+      .mockResolvedValueOnce({
+        data: {
+          message: "user saved",
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          id: 1,
+          username: "user1",
+          displayName: "display1",
+          image: "profile1.png",
+        },
+      });
+
+    fireEvent.click(button);
+
+    const myProfileLink = await waitForElement(() => queryByText("My Profile"));
+    expect(myProfileLink).toBeInTheDocument();
+  });
+  it("saves logged in user details to localstorage on succesful login", async () => {
+    const { queryByPlaceholderText, container, queryByText } = setup("/login");
+
+    const userNameInput = queryByPlaceholderText("Your username");
+    fireEvent.change(userNameInput, changeEvent("my-user-name"));
+    const passwordInput = queryByPlaceholderText("Your password");
+    fireEvent.change(passwordInput, changeEvent("P4ssword$"));
+    const button = container.querySelector("button");
+
+    axios.post = jest.fn().mockResolvedValue({
+      data: {
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+      },
+    });
+
+    fireEvent.click(button);
+
+    await waitForElement(() => queryByText("My Profile"));
+
+    const dataInStorage = JSON.parse(localStorage.getItem("hoax-auth"));
+    expect(dataInStorage).toEqual({
+      id: 1,
+      username: "user1",
+      displayName: "display1",
+      image: "profile1.png",
+      password: "P4ssword$",
+      isLoggedIn: true,
+    });
+  });
+  it("displays logged in top bar (My Profile and logout) if user is logged in", async () => {
+    localStorage.setItem(
+      "hoax-auth",
+      JSON.stringify({
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+        password: "P4ssword$",
+        isLoggedIn: true,
+      })
+    );
+
+    const { queryByText } = setup("/");
+    const myProfileLink = queryByText("My Profile");
+    expect(myProfileLink).toBeInTheDocument();
+  });
+  it("sets axios authorization with base 64 encoded user credentials after login success", async () => {
+    const { queryByPlaceholderText, container, queryByText } = setup("/login");
+
+    const userNameInput = queryByPlaceholderText("Your username");
+    fireEvent.change(userNameInput, changeEvent("my-user-name"));
+    const passwordInput = queryByPlaceholderText("Your password");
+    fireEvent.change(passwordInput, changeEvent("P4ssword$"));
+    const button = container.querySelector("button");
+
+    axios.post = jest.fn().mockResolvedValue({
+      data: {
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+      },
+    });
+
+    fireEvent.click(button);
+
+    await waitForElement(() => queryByText("My Profile"));
+    const axiosAuthorization = axios.defaults.headers.common["Authorization"];
+    const encoded = btoa("user1:P4ssword$");
+    const expectedAuthorization = `Basic ${encoded}`;
+
+    expect(axiosAuthorization).toBe(expectedAuthorization);
+  });
+
+  it("sets axios authorization with base64 encoded  user credentials if user is logged in", async () => {
+    localStorage.setItem(
+      "hoax-auth",
+      JSON.stringify({
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+        password: "P4ssword$",
+        isLoggedIn: true,
+      })
+    );
+
+    setup("/");
+    const axiosAuthorization = axios.defaults.headers.common["Authorization"];
+    const encoded = btoa("user1:P4ssword$");
+    const expectedAuthorization = `Basic ${encoded}`;
+
+    expect(axiosAuthorization).toBe(expectedAuthorization);
+  });
+  it("removes axios authorization when user logout", async () => {
+    localStorage.setItem(
+      "hoax-auth",
+      JSON.stringify({
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+        password: "P4ssword$",
+        isLoggedIn: true,
+      })
+    );
+
+    const { queryByText } = setup("/");
+    fireEvent.click(queryByText("Logout"));
+    const axiosAuthorization = axios.defaults.headers.common["Authorization"];
+    expect(axiosAuthorization).toBeFalsy();
   });
 });

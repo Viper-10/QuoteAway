@@ -166,19 +166,19 @@ describe("Login Page ", () => {
       const alert = queryByText("Login failed");
       expect(alert).not.toBeInTheDocument();
     });
-    // it("redirects to home page after successful login", async () => {
-    //   const actions = {
-    //     postLogin: jest.fn().mockResolvedValue({}),
-    //   };
+    it("redirects to home page after successful login", async () => {
+      const actions = {
+        postLogin: jest.fn().mockResolvedValue({}),
+      };
 
-    //   const history = {
-    //     push: jest.fn(),
-    //   };
+      const history = {
+        push: jest.fn(),
+      };
 
-    //   setUpForSubmit({ actions, history });
-    //   fireEvent.click(button);
+      setUpForSubmit({ actions, history });
+      fireEvent.click(button);
 
-    //   await waitFor(() => expect(history.push).toHaveBeenCalledWith("/"));
-    // });
+      await waitFor(() => expect(history.push).toHaveBeenCalledWith("/"));
+    });
   });
 });

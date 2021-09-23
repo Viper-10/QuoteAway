@@ -139,19 +139,19 @@ describe("UserSignUpPage_tests", () => {
       };
       expect(actions.postSignUp).toHaveBeenCalledWith(expectedUserObject);
     });
-    //   it("redirects to home page after successful signup", async () => {
-    //     const actions = {
-    //       postSignUp: jest.fn().mockResolvedValue({}),
-    //     };
+    it("redirects to home page after successful signup", async () => {
+      const actions = {
+        postSignUp: jest.fn().mockResolvedValue({}),
+      };
 
-    //     const history = {
-    //       push: jest.fn(),
-    //     };
+      const history = {
+        push: jest.fn(),
+      };
 
-    //     setUpForSubmit({ actions, history });
-    //     fireEvent.click(button);
+      setUpForSubmit({ actions, history });
+      fireEvent.click(button);
 
-    //     await waitFor(() => expect(history.push).toHaveBeenCalledWith("/"));
-    //   });
+      await waitFor(() => expect(history.push).toHaveBeenCalledWith("/"));
+    });
   });
 });

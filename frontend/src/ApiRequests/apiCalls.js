@@ -19,14 +19,14 @@ export const login = (user) => {
    by spring security using basic http, we send user as the third parameter
    which configures the auth part of request*/
   return axios.post("api/1.0/login", {}, { auth: user });
+};
 
-  // const response = await fetch("api/1.0/users", {
-  //   body: user,
-  //   method: "POST",
-  //   headers: {
-  //     "Content-type": "application/json",
-  //   },
-  // });
-  // const data = await response.json();
-  // console.log(data);
+export const setAuthorizationHeader = ({ username, password, isLoggedIn }) => {
+  if (isLoggedIn) {
+    axios.defaults.headers.common["Authorization"] = `Basic ${btoa(
+      username + ":" + password
+    )}`;
+  } else {
+    delete axios.defaults.headers.common["Authorization"];
+  }
 };

@@ -9,14 +9,12 @@ import { HashRouter } from "react-router-dom";
 import App from "./containers/App";
 import { StrictMode } from "react/cjs/react.production.min";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware } from "redux";
-import authReducer from "./Redux/authReducer";
-import logger from "redux-logger";
+import configureStore from "./Redux/configureStore";
 
-const actions = {
-  postSignUp: apiCalls.signup,
-  postLogin: apiCalls.login,
-};
+// const actions = {
+//   postSignUp: apiCalls.signup,
+//   postLogin: apiCalls.login,
+// };
 
 /*
 In redux application we have one store and it is responsible for holding the 
@@ -30,7 +28,7 @@ In redux application we have one store and it is responsible for holding the
 */
 // logger logs can be seen in the console in browser
 
-const store = createStore(authReducer, applyMiddleware(logger));
+const store = configureStore();
 
 ReactDOM.render(
   // <React.StrictMode>

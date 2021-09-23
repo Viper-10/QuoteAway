@@ -2,6 +2,9 @@ import React from "react";
 import * as apiCalls from "../ApiRequests/apiCalls";
 import Input from "../components/Input";
 import ButtonWithProgress from "../components/ButtonWithProgress";
+import { connect } from "react-redux";
+import * as authActions from "../Redux/authActions";
+
 export class UserSignUpPage extends React.Component {
   state = {
     displayName: "",
@@ -75,14 +78,13 @@ export class UserSignUpPage extends React.Component {
         .postSignUp(user)
         .then((response) => {
           this.setState({ pendingApiSubmitCall: false }, () => {
-            this.props.history.push("/");
-            /* 
+            /*
               History is a part of the props provided by router
-              It has a function called push, accessed by 
+              It has a function called push, accessed by
               this.props.history.push("url") in the PageComponent
-
-              It'll redirect to that url which has been pushed. 
+              It'll redirect to that url which has been pushed.
             */
+            this.props.history.push("/");
           });
         })
         .catch((apiError) => {
@@ -185,4 +187,11 @@ UserSignUpPage.defaultProps = {
   },
 };
 
-export default UserSignUpPage;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: {
+      postSignUp: (user) => dispatch(authActions.signupHandler(user)),
+    },
+  };
+};
+export default connect(null, mapDispatchToProps)(UserSignUpPage);

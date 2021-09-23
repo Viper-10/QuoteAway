@@ -4,13 +4,7 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import UserSignUpPage from "../pages/UserSignUpPage";
 import UserPage from "../pages/UserPage";
-import * as apiCalls from "../ApiRequests/apiCalls";
 import TopBar from "../components/TopBar";
-
-const actions = {
-  postSignUp: apiCalls.signup,
-  postLogin: apiCalls.login,
-};
 
 /* 
   History is a part of the props provided by router
@@ -27,16 +21,8 @@ function App() {
       <div className="container">
         <Switch>
           <Route exact path="/" component={HomePage} />
-          <Route
-            path="/login"
-            component={(props) => <LoginPage {...props} actions={actions} />}
-          />
-          <Route
-            path="/signup"
-            component={(props) => (
-              <UserSignUpPage {...props} actions={actions} />
-            )}
-          />
+          <Route path="/login" component={LoginPage} />
+          <Route path="/signup" component={UserSignUpPage} />
           <Route path="/:username" component={UserPage} />
         </Switch>
       </div>
