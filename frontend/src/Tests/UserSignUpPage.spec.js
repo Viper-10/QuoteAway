@@ -87,7 +87,7 @@ describe("UserSignUpPage_tests", () => {
       fireEvent.change(displayNameInput, changeEvent("my-display-name"));
       expect(displayNameInput).toHaveValue("my-display-name");
     });
-    it("sets the userName value into state", () => {
+    it("sets the username value into state", () => {
       const { queryByPlaceholderText } = render(<UserSignUpPage />);
       const userNameInput = queryByPlaceholderText("Your username");
       fireEvent.change(userNameInput, changeEvent("my-user-name"));
@@ -133,7 +133,7 @@ describe("UserSignUpPage_tests", () => {
       setUpForSubmit({ actions });
       fireEvent.click(button);
       const expectedUserObject = {
-        userName: "my-user-name",
+        username: "my-user-name",
         displayName: "my-display-name",
         password: "P4ssword$",
       };

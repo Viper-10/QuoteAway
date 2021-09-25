@@ -12,7 +12,7 @@ public class UniqueUsernameValidator implements ConstraintValidator<UniqueUserna
 	
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		User inDB = userRepository.findByUserName(value); 
+		User inDB = userRepository.findByUsername(value);
 		
 		if(inDB == null) return true; 
 		

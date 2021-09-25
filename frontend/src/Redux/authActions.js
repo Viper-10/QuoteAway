@@ -25,7 +25,7 @@ export const signupHandler = (user) => {
   return function (dispatch) {
     return apiCalls.signup(user).then((response) => {
       return dispatch(
-        loginHandler({ username: user.userName, password: user.password })
+        loginHandler({ username: user.username, password: user.password })
       );
     });
   };

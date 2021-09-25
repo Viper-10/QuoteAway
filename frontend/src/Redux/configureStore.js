@@ -9,7 +9,7 @@ const configureStore = (addLogger = true) => {
 
   let persistedState = {
     id: 0,
-    userName: "",
+    username: "",
     displayName: "",
     image: "",
     isLoggedIn: false,

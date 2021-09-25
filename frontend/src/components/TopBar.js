@@ -41,7 +41,7 @@ class TopBar extends React.Component {
             Logout
           </li>
           <li className="nav-item">
-            <Link to={`/${this.props.user.userName}`} className="nav-link">
+            <Link to={`/${this.props.user.username}`} className="nav-link">
               My Profile
             </Link>
           </li>

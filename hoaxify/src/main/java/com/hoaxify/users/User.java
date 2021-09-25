@@ -42,7 +42,7 @@ public class User implements UserDetails{
 	@Size(min = 4, max = 255)
 	@UniqueUsername
 	@JsonView(UserViews.Base.class)
-	private String userName;
+	private String username;
 	
 	@NotNull(message = "{hoaxify.user.constraints.displayname.NotNull.message}")
 	@NotEmpty(message = "{hoaxify.user.contraints.displayname.NotEmpty.message}")
@@ -74,7 +74,7 @@ public class User implements UserDetails{
 	@Override
 	@Transient
 	public String getUsername() {
-		return userName; 
+		return username;
 	}
 
 	@Override

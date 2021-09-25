@@ -3,6 +3,7 @@ package com.hoaxify;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,10 +37,14 @@ public class UserControllerTest {
 	@Autowired
 	UserRepository userRepository;
 	
-	public ResponseEntity<Object> postSignUp(){
+	private ResponseEntity<Object> postSignUp(){
 		User user = createValidUser(); 
 		ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
 		return response; 
+	}
+	
+	private <T> ResponseEntity<T> getUsers(ParameterizedTypeReference<T> parameterizedTypeReference) {
+		return testRestTemplate.exchange(API_1_0_USERS, HttpMethod.GET, null, parameterizedTypeReference);
 	}
 	
 	// executes before each test case. 
@@ -57,7 +64,7 @@ public class UserControllerTest {
 	}
 	
 	@Test 
-	public void postUser_WhenAnotherUser_AlreadyExistsOfSameUserName() {
+	public void postUser_WhenAnotherUser_AlreadyExistsOfSameUsername() {
 		User user1 = createValidUser(); 
 		User user2 = createValidUser(); 
 		
@@ -104,10 +111,10 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void postUser_whereUserHasNullUserName_receiveBadRequest() {
+	public void postUser_whereUserHasNullUsername_receiveBadRequest() {
 		
 		User user = createValidUser();
-		user.setUserName(null);
+		user.setUsername(null);
 		
 		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
 		
@@ -124,11 +131,42 @@ public class UserControllerTest {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
-	
 	@Test
 	public void postUser_WhenUserIsValid_saveToDatabase() {		
-		ResponseEntity<Object> response = postSignUp(); 
+		postSignUp(); 
 		assertThat(userRepository.count()).isEqualTo(1); 
 	}
+	
+	@Test 
+	public void getUser_WhenNoUserIsInDatabase_receiveOK() {
+		ResponseEntity<Object> response = testRestTemplate.getForEntity(API_1_0_USERS, Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK); 
+	}
+	
+	@Test
+	public void getUser_whenThereAreNoUserInDB_receivePageWithZeroUser() {
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {});
+		assertThat(response.getBody().getTotalElements()).isEqualTo(0); 
+	}
+	
+	
+	@Test
+	public void getUser_whenThereIsAUserInDB_receivePageWithUser() {
+		userRepository.save(TestUtil.createValidUser());
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {});
+		assertThat(response.getBody().getNumberOfElements()).isEqualTo(1); 
+	}
+	
+	@Test
+	public void getUser_whenThereIsAUserInDB_receivePageWithUser_withoutPassword() {
+		userRepository.save(TestUtil.createValidUser());
+		ResponseEntity<TestPage<Map<String, Object>>> response = getUsers(new ParameterizedTypeReference<TestPage<Map<String, Object>>>() {});
+		Map<String, Object> entity = response.getBody().getContent().get(0); 
+		
+		assertThat(entity.containsKey("password")).isFalse(); 
+	}
+
+	
+	
 	
 }
