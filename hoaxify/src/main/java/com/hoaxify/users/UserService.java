@@ -1,5 +1,7 @@
 package com.hoaxify.users;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +30,13 @@ public class UserService {
 //		
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
-	
 	}
 
-	public Page<?> getUsers() {
-		Pageable pageable = PageRequest.of(0, 10); 
+	public Page<User> getUsers(User loggedInUser, Pageable pageable) {
+		if(loggedInUser != null) {
+			return userRepository.findByUsernameNot(loggedInUser.getUsername(), pageable);
+		}
+		
 		return userRepository.findAll(pageable); 
 	}
 

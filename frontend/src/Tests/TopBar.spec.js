@@ -8,7 +8,7 @@ import authReducer from "../Redux/authReducer";
 
 const loggedInState = {
   id: 1,
-  userName: "user1",
+  username: "user1",
   displayName: "display1",
   image: "profile1.png",
   isLoggedIn: true,
@@ -16,7 +16,7 @@ const loggedInState = {
 };
 const defaultState = {
   id: 0,
-  userName: "",
+  username: "",
   displayName: "",
   image: "",
   isLoggedIn: false,

@@ -9,6 +9,7 @@ import {
 import { Provider } from "react-redux";
 import configureStore from "../Redux/configureStore";
 import axios from "axios";
+import * as apiCalls from "../ApiRequests/apiCalls";
 
 const defaultState = {
   id: 0,
@@ -22,6 +23,13 @@ const defaultState = {
 beforeEach(() => {
   localStorage.clear();
   delete axios.defaults.headers.common["Authorization"];
+});
+apiCalls.listUsers = jest.fn().mockResolvedValue({
+  data: {
+    content: [],
+    number: 0,
+    size: 3,
+  },
 });
 const changeEvent = (content) => {
   return {
@@ -287,3 +295,4 @@ describe("App", () => {
     expect(axiosAuthorization).toBeFalsy();
   });
 });
+console.error = () => {};

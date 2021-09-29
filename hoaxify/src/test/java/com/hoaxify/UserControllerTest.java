@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,15 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.hoaxify.shared.GenericResponse;
 import com.hoaxify.users.User;
 import com.hoaxify.users.UserRepository;
+import com.hoaxify.users.UserService;
+
 import static com.hoaxify.TestUtil.createValidUser; 
 
 @RunWith(SpringRunner.class)
@@ -37,14 +41,26 @@ public class UserControllerTest {
 	@Autowired
 	UserRepository userRepository;
 	
+	@Autowired
+	UserService userService;
+	
 	private ResponseEntity<Object> postSignUp(){
 		User user = createValidUser(); 
 		ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
 		return response; 
 	}
 	
+	public void authenticate(String username) {
+		testRestTemplate.getRestTemplate().getInterceptors().add(new BasicAuthenticationInterceptor(username, "P4ssword$")); 
+	}
+	
+	
 	private <T> ResponseEntity<T> getUsers(ParameterizedTypeReference<T> parameterizedTypeReference) {
 		return testRestTemplate.exchange(API_1_0_USERS, HttpMethod.GET, null, parameterizedTypeReference);
+	}
+	
+	private <T> ResponseEntity<T> getUsers(ParameterizedTypeReference<T> parameterizedTypeReference, String path) {
+		return testRestTemplate.exchange(path, HttpMethod.GET, null, parameterizedTypeReference);
 	}
 	
 	// executes before each test case. 
@@ -166,7 +182,60 @@ public class UserControllerTest {
 		assertThat(entity.containsKey("password")).isFalse(); 
 	}
 
+	@Test
+	public void getUser_whenPageIsRequestedFor3ItemsPerPageWhereDBHas20Users_receive3Users() {
+		IntStream
+			.rangeClosed(1, 20)
+			.mapToObj(i -> "test-user-" + i)
+			.map(TestUtil::createValidUser).forEach(userRepository::save);
+		
+		String path = API_1_0_USERS + "?page=0&size=3";
+		
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {}, path);
+		
+		assertThat(response.getBody().getContent().size()).isEqualTo(3);
+	}
 	
 	
+	@Test
+	public void getUser_whenPageSizeIsNotProvided_receivePageSizeAs10() {
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {});
+		assertThat(response.getBody().getSize()).isEqualTo(10); 
+	}
+	
+	
+	@Test
+	public void getUser_whenPageSizeIsGreaterThan100_receivePageSizeAs100() {
+		String path = API_1_0_USERS + "?size=500";
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {}, path);
+		assertThat(response.getBody().getSize()).isEqualTo(100); 
+	}
+	
+	@Test
+	public void getUser_whenPageSizeIsNegative_receivePageSizeAs10() {
+		String path = API_1_0_USERS + "?size=-5";
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {}, path);
+		assertThat(response.getBody().getSize()).isEqualTo(10); 
+	}
+	@Test
+	public void getUser_whenPageSizeIsNegative_receiveFirstPage() {
+		String path = API_1_0_USERS + "?size=-5";
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {}, path);
+		assertThat(response.getBody().getNumber()).isEqualTo(0); 
+	}
+	
+	@Test
+	public void getUser_whenUserLoggedIn_receivePageWithoutLoggedInUser() {
+		userService.save(TestUtil.createValidUser("user1"));
+		userService.save(TestUtil.createValidUser("user2"));
+		userService.save(TestUtil.createValidUser("user3"));
+		
+		authenticate("user1"); 
+		
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {});
+		
+		assertThat(response.getBody().getTotalElements()).isEqualTo(2);
+		
+	}
 	
 }

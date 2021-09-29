@@ -22,4 +22,35 @@ describe("apicalls", () => {
       expect(path).toBe("api/1.0/login");
     });
   });
+
+  describe("listUser", () => {
+    it("calls /api/1.0/users?page=0&size=3 when no param provided for listUsers", () => {
+      const mockListUsers = jest.fn();
+      axios.get = mockListUsers;
+      apiCalls.listUsers();
+
+      expect(mockListUsers).toBeCalledWith("/api/1.0/users?page=0&size=3");
+    });
+    it("calls /api/1.0/users?page=5&size=10 when params are provided for listUsers", () => {
+      const mockListUsers = jest.fn();
+      axios.get = mockListUsers;
+      apiCalls.listUsers({ page: 5, size: 10 });
+
+      expect(mockListUsers).toBeCalledWith("/api/1.0/users?page=5&size=10");
+    });
+    it("calls /api/1.0/users?page=5&size=3 when size is not  provided for listUsers", () => {
+      const mockListUsers = jest.fn();
+      axios.get = mockListUsers;
+      apiCalls.listUsers({ page: 5 });
+
+      expect(mockListUsers).toBeCalledWith("/api/1.0/users?page=5&size=3");
+    });
+    it("calls /api/1.0/users?page=0&size=5 when page is not  provided for listUsers", () => {
+      const mockListUsers = jest.fn();
+      axios.get = mockListUsers;
+      apiCalls.listUsers({ size: 5 });
+
+      expect(mockListUsers).toBeCalledWith("/api/1.0/users?page=0&size=5");
+    });
+  });
 });

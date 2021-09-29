@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hoaxify.error.ApiError;
 import com.hoaxify.shared.CurrentUser;
+import com.hoaxify.users.vm.UserVM;
 
 @RestController
 public class LoginController {
 	
 	@PostMapping("/api/1.0/login")
-	@JsonView(UserViews.Base.class)
-	public User handleLogin(@CurrentUser User loggedInUser) {
-		return loggedInUser;
+	public UserVM handleLogin(@CurrentUser User loggedInUser) {
+		return new UserVM(loggedInUser);
 	}
 	
 	

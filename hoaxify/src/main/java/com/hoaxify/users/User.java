@@ -18,16 +18,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 //@Table(uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class User implements UserDetails{
 		
 	@Id
 	@GeneratedValue
-	@JsonView(UserViews.Base.class)
+//	@JsonView(UserViews.Base.class)
 	private long id; 
 	
 	/*
@@ -41,14 +47,12 @@ public class User implements UserDetails{
 	@NotBlank(message = "{hoaxify.user.contraints.username.NotBlank.message}")
 	@Size(min = 4, max = 255)
 	@UniqueUsername
-	@JsonView(UserViews.Base.class)
 	private String username;
 	
 	@NotNull(message = "{hoaxify.user.constraints.displayname.NotNull.message}")
 	@NotEmpty(message = "{hoaxify.user.contraints.displayname.NotEmpty.message}")
 	@NotBlank(message = "{hoaxify.user.contraints.displayname.NotBlank.message}")
 	@Size(min = 4, max = 255)
-	@JsonView(UserViews.Base.class)
 	private String displayName;
 	
 	@NotNull(message = "{hoaxify.user.constraints.password.NotNull.message}")
@@ -58,7 +62,6 @@ public class User implements UserDetails{
 	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message = "{hoaxify.user.contraints.password.NotMatchingPattern.message}")
 	private String password;
 	
-	@JsonView(UserViews.Base.class)
 	private String image;
 
 	@Override
@@ -67,15 +70,11 @@ public class User implements UserDetails{
 		return AuthorityUtils.createAuthorityList("Role_USER");
 	}
 
-	// this is not the getter for UserName field in User class, but a method
-	// defined in UserDetails interface meant to be the getter for Username
-	// so we have to override it and return the username. 
-	
-	@Override
-	@Transient
-	public String getUsername() {
-		return username;
-	}
+//	@Override
+//	@Transient
+//	public String getUsername() {
+//		return username;
+//	}
 
 	@Override
 	@Transient

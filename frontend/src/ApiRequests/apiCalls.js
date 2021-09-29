@@ -2,22 +2,16 @@ import axios from "axios";
 
 export const signup = (user) => {
   return axios.post("api/1.0/users", user);
-
-  // const response = await fetch("api/1.0/users", {
-  //   body: user,
-  //   method: "POST",
-  //   headers: {
-  //     "Content-type": "application/json",
-  //   },
-  // });
-  // const data = await response.json();
-  // console.log(data);
 };
 export const login = (user) => {
   /* Since we're not passing login crendentials to api as request body,
    but instead we want to pass it as authorization headers to be validated
    by spring security using basic http, we send user as the third parameter
-   which configures the auth part of request*/
+   which configures the auth part of request. 
+   
+   Since we need to send auth in every request, we have a separate function to set authorization header
+   */
+
   return axios.post("api/1.0/login", {}, { auth: user });
 };
 
@@ -29,4 +23,9 @@ export const setAuthorizationHeader = ({ username, password, isLoggedIn }) => {
   } else {
     delete axios.defaults.headers.common["Authorization"];
   }
+};
+
+export const listUsers = (param = { page: 0, size: 3 }) => {
+  const path = `/api/1.0/users?page=${param.page || 0}&size=${param.size || 3}`;
+  return axios.get(path);
 };
