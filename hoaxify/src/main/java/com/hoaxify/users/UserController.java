@@ -17,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,10 +70,15 @@ public class UserController {
 	// this is controller way of customizing the page size. 
 	
 	@GetMapping
-	public Page<UserVM> hangleGetUsers(@PageableDefault(size = 10)Pageable pageable, @CurrentUser User loggedInUser) {
+	public Page<UserVM> handleGetUsers(@PageableDefault(size = 10)Pageable pageable, @CurrentUser User loggedInUser) {
 		return userService.getUsers(loggedInUser, pageable).map((user) -> new UserVM(user));
 	}
 
+	@GetMapping(path = "{username}")
+	public UserVM handleGetUser(@PathVariable String username) {
+		User user = userService.getByUsername(username);
+		return new UserVM(user);
+	}
 	
 	@ExceptionHandler({MethodArgumentNotValidException.class})
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

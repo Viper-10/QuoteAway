@@ -21,6 +21,7 @@ import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.hoaxify.error.ApiError;
 import com.hoaxify.shared.GenericResponse;
 import com.hoaxify.users.User;
 import com.hoaxify.users.UserRepository;
@@ -238,4 +239,44 @@ public class UserControllerTest {
 		
 	}
 	
+	@Test
+	public void getUserByUsername_whenUserExist_receiveOk() {
+		String username = "test-user"; 
+		userService.save(TestUtil.createValidUser(username));
+		ResponseEntity<Object> response = getUser(username, Object.class);
+		
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		
+	}
+	
+	@Test
+	public void getUserByUsername_whenUserDoesNotExist_receiveNotFound() {
+		String username = "unknown-user"; 
+		ResponseEntity<Object> response = getUser(username, Object.class);
+		
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		
+	}
+	@Test
+	public void getUserByUsername_whenUserDoesNotExist_receiveApiError() {
+		String username = "unknown-user"; 
+		ResponseEntity<ApiError> response = getUser(username, ApiError.class);
+		
+		assertThat(response.getBody().getMessage().contains("unknown-user")).isTrue();
+	}
+	
+	@Test
+	public void getUserByUsername_whenUserExist_receiveWithoutPassword() {
+		String username = "test-user"; 
+		userService.save(TestUtil.createValidUser(username));
+		ResponseEntity<String> response = getUser(username, String.class);
+		
+		assertThat(response.getBody().contains("password")).isFalse();		
+	}
+
+	private <T> ResponseEntity<T> getUser(String username, Class<T> responseType) {
+		String path = API_1_0_USERS + "/" + username; 
+		
+		return testRestTemplate.getForEntity(path, responseType);
+	}
 }

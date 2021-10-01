@@ -19,6 +19,7 @@ public class HoaxifyApplication {
 	}
 	
 	@Bean
+	
 	// when we're running test, this shouldn't interfere.
 	// so we disable it for profile test. 
 	
@@ -28,11 +29,8 @@ public class HoaxifyApplication {
 				IntStream.rangeClosed(1, 15)
 						.mapToObj(i -> {
 				
-					User user = User.builder()
-								.username("user"+i)
-								.displayName("display"+i)
-								.password("P4ssword$")
-								.build();
+					User user = User.builder().username("user" + i).displayName("display" + i).password("P4ssword$").build();
+									
 					return user; 
 					
 				}).forEach(userService::save);

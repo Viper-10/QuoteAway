@@ -26,8 +26,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 //@Table(uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class User implements UserDetails{
 		

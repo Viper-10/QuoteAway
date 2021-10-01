@@ -4,12 +4,18 @@ import {
   waitFor,
   waitForDomChange,
   waitForElement,
+  fireEvent,
 } from "@testing-library/react";
 import UserList from "../Components/UserList";
 import * as apiCalls from "../ApiRequests/apiCalls";
+import { MemoryRouter } from "react-router";
 
 const setup = () => {
-  return render(<UserList />);
+  return render(
+    <MemoryRouter>
+      <UserList />
+    </MemoryRouter>
+  );
 };
 apiCalls.listUsers = jest.fn().mockResolvedValue({
   data: {
@@ -78,6 +84,29 @@ const mockSuccessGetMultiPageFirst = {
     totalPages: 2,
   },
 };
+const mockSuccessGetMultiPageLast = {
+  data: {
+    content: [
+      {
+        username: "user4",
+        displayName: "display4",
+        image: "",
+      },
+    ],
+    number: 0,
+    first: false,
+    last: true,
+    size: 3,
+    totalPages: 2,
+  },
+};
+const mockFailGet = {
+  response: {
+    data: {
+      message: "Load error",
+    },
+  },
+};
 describe("UserList", () => {
   describe("Layout", () => {
     it("has header of Users", () => {
@@ -138,6 +167,40 @@ describe("UserList", () => {
 
       setup();
       expect(apiCalls.listUsers).toHaveBeenCalledWith({ page: 0, size: 3 });
+    });
+  });
+  describe("Interactions", () => {
+    it("displays the next page when next button is clicked", async () => {
+      apiCalls.listUsers = jest
+        .fn()
+        .mockResolvedValueOnce(mockSuccessGetMultiPageFirst)
+        .mockResolvedValueOnce(mockSuccessGetMultiPageLast);
+
+      const { queryByText } = setup();
+      const nextLink = await waitForElement(() => queryByText("next >"));
+      fireEvent.click(nextLink);
+
+      const secondPageUser = await waitForElement(() =>
+        queryByText("display4@user4")
+      );
+      expect(secondPageUser).toBeInTheDocument();
+    });
+    it("displays error message when loading other page fails", async () => {
+      apiCalls.listUsers = jest
+        .fn()
+        .mockResolvedValueOnce(mockSuccessGetMultiPageLast)
+        .mockRejectedValueOnce(mockFailGet);
+
+      const { queryByText } = setup();
+      const previousLink = await waitForElement(() =>
+        queryByText("< previous")
+      );
+      fireEvent.click(previousLink);
+
+      const errorMessage = await waitForElement(() =>
+        queryByText("User load failed")
+      );
+      expect(errorMessage).toBeInTheDocument();
     });
   });
 });

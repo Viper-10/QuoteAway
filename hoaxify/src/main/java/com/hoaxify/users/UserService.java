@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hoaxify.exceptions.DuplicateUsernameException;
+import com.hoaxify.exceptions.NotFoundException;
 
 @Service
 public class UserService {
@@ -38,6 +39,15 @@ public class UserService {
 		}
 		
 		return userRepository.findAll(pageable); 
+	}
+
+	public User getByUsername(String username) {
+		
+		User user = userRepository.findByUsername(username);
+		if(user == null) {
+			throw new NotFoundException(username + " not found");
+		}		
+		return user; 
 	}
 
 }
