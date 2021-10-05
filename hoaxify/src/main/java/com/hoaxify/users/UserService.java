@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.hoaxify.exceptions.DuplicateUsernameException;
 import com.hoaxify.exceptions.NotFoundException;
+import com.hoaxify.users.vm.UserUpdateVM;
 
 @Service
 public class UserService {
@@ -48,6 +49,17 @@ public class UserService {
 			throw new NotFoundException(username + " not found");
 		}		
 		return user; 
+	}
+
+	public User update(long id, UserUpdateVM userUpdate) {
+		// we know the user exists for sure, since the user is logged in.  
+		// so we don't do findById or user name
+		
+		User inDB = userRepository.getOne(id); 
+		
+		inDB.setDisplayName(userUpdate.getDisplayName());
+		
+		return userRepository.save(inDB); 
 	}
 
 }

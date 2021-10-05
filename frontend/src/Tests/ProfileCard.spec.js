@@ -21,5 +21,25 @@ describe("ProfileCard", () => {
       const image = container.querySelector("img");
       expect(image).toBeInTheDocument();
     });
+    it("displays edit button when isEditable property set as true", () => {
+      const { queryByText } = render(
+        <ProfileCard user={user} isEditable={true} />
+      );
+      const editButton = queryByText("Edit");
+      expect(editButton).toBeInTheDocument();
+    });
+    it("does not display edit button when isEditable property not provided", () => {
+      const { queryByText } = render(<ProfileCard user={user} />);
+      const editButton = queryByText("Edit");
+      expect(editButton).not.toBeInTheDocument();
+    });
+
+    it("displays displayName input when inEditMode property set as true", () => {
+      const { container } = render(
+        <ProfileCard user={user} inEditMode={true} />
+      );
+      const displayInput = container.querySelector("input");
+      expect(displayInput).toBeInTheDocument();
+    });
   });
 });
