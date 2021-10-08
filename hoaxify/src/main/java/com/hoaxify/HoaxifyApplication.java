@@ -20,10 +20,10 @@ public class HoaxifyApplication {
 	
 	@Bean
 	
-	// when we're running test, this shouldn't interfere.
-	// so we disable it for profile test. 
+	// This is for profile dev, so we don't need to worry about this interfering with tests as they're 
+	// marked as profile test for which this wont' run
 	
-	@Profile("!test")
+	@Profile("dev")
 	CommandLineRunner run(UserService userService) {
 		return (args) -> {
 				IntStream.rangeClosed(1, 15)

@@ -1,6 +1,7 @@
 package com.hoaxify.users;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,6 +58,9 @@ public class UserService {
 		
 		User inDB = userRepository.getOne(id); 
 		
+		inDB.setDisplayName(userUpdate.getDisplayName());
+		String savedImageName = inDB.getUsername() + UUID.randomUUID().toString().replaceAll("-", "");
+		inDB.setImage(savedImageName);
 		inDB.setDisplayName(userUpdate.getDisplayName());
 		
 		return userRepository.save(inDB); 
