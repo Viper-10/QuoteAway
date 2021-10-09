@@ -1,11 +1,10 @@
 import React from "react";
-import defaultPicture from "../assets/profile.png";
 import ProfileImageWithDefault from "./ProfileImageWithDefault";
 import Input from "./Input";
 import ButtonWithProgress from "./ButtonWithProgress";
 
 const ProfileCard = (props) => {
-  const { displayName, username } = props.user;
+  const { displayName, username, image } = props.user;
 
   const showEditButton = props.isEditable && !props.inEditMode;
 
@@ -16,7 +15,8 @@ const ProfileCard = (props) => {
           alt="profile"
           width="200"
           height="200"
-          image={props.image}
+          image={image}
+          src={props.loadedImage}
           className="rounded-circle shadow"
         />
       </div>
@@ -29,6 +29,11 @@ const ProfileCard = (props) => {
               label={`Change Display Name for ${username}`}
               onChange={props.onChangeDisplayName}
             />
+            <input
+              className="form-control-file mt-2"
+              type="file"
+              onChange={props.onFileSelect}
+            />
           </div>
         )}
         {showEditButton && (
@@ -36,11 +41,9 @@ const ProfileCard = (props) => {
             className="btn btn-outline-success"
             onClick={props.onClickEdit}
           >
-            <i className="fas fa-user-edit" />
-            Edit
+            <i className="fas fa-user-edit" /> Edit
           </button>
         )}
-
         {props.inEditMode && (
           <div>
             <ButtonWithProgress
@@ -48,21 +51,18 @@ const ProfileCard = (props) => {
               onClick={props.onClickSave}
               text={
                 <span>
-                  <i className="fas fa-save" />
-                  Save
+                  <i className="fas fa-save" /> Save
                 </span>
               }
               pendingApiCall={props.pendingUpdateCall}
               disabled={props.pendingUpdateCall}
             />
-
             <button
-              className="btn btn-outline-secondary ms-3"
+              className="btn btn-outline-secondary ml-1"
               onClick={props.onClickCancel}
               disabled={props.pendingUpdateCall}
             >
-              <i className="fas fa-window-close" />
-              Cancel
+              <i className="fas fa-window-close" /> Cancel
             </button>
           </div>
         )}

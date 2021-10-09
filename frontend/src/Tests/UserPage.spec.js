@@ -1,5 +1,10 @@
 import React from "react";
-import { render, waitForElement, fireEvent } from "@testing-library/react";
+import {
+  render,
+  waitForElement,
+  fireEvent,
+  waitForDomChange,
+} from "@testing-library/react";
 import UserPage from "../pages/UserPage";
 import * as apiCalls from "../ApiRequests/apiCalls";
 import { Provider } from "react-redux";
@@ -192,6 +197,109 @@ describe("User page", () => {
         queryByText("Edit")
       );
       expect(editButtonAfterClickingSave).toBeInTheDocument();
+    });
+
+    it("displays the selected image in edit mode", async () => {
+      const { container } = await setUpForEdit();
+
+      const inputs = container.querySelectorAll("input");
+      const uploadInput = inputs[1];
+
+      const file = new File(["dummy content"], "example.png", {
+        type: "image/png",
+      });
+
+      fireEvent.change(uploadInput, { target: { files: [file] } });
+
+      await waitForDomChange();
+
+      const image = container.querySelector("img");
+      expect(image.src).toContain("data:image/png;base64");
+    });
+    it("returns back to original image when the new image added before saving is cancelled", async () => {
+      const { queryByText, container } = await setUpForEdit();
+
+      const inputs = container.querySelectorAll("input");
+      // selecting the file
+      const uploadInput = inputs[1];
+
+      const file = new File(["dummy content"], "example.png", {
+        type: "image/png",
+      });
+
+      fireEvent.change(uploadInput, { target: { files: [file] } });
+
+      await waitForDomChange();
+
+      const cancelButton = queryByText("Cancel");
+      fireEvent.click(cancelButton);
+
+      const image = container.querySelector("img");
+      expect(image.src).toContain("/images/profile/profile1.png");
+    });
+    it("does not throw error after file not selected", async () => {
+      const { container } = await setUpForEdit();
+
+      const inputs = container.querySelectorAll("input");
+      const uploadInput = inputs[1];
+
+      expect(() =>
+        fireEvent.change(uploadInput, { target: { files: [] } })
+      ).not.toThrow();
+    });
+    it("calls updateUser api with request body having new image without data:image/png;base64", async () => {
+      const { queryByText, container } = await setUpForEdit();
+      apiCalls.updateUser = jest.fn().mockResolvedValue(mockSuccessUpdateUser);
+
+      const inputs = container.querySelectorAll("input");
+      const uploadInput = inputs[1];
+      const file = new File(["dummy content"], "example.png", {
+        type: "image/png",
+      });
+
+      fireEvent.change(uploadInput, { target: { files: [file] } });
+
+      await waitForDomChange();
+
+      const saveButton = queryByText("Save");
+      fireEvent.click(saveButton);
+
+      const requestBody = apiCalls.updateUser.mock.calls[0][1];
+
+      expect(requestBody.image).not.toContain("data:image/png;base64");
+    });
+    it("returns to last updated image when image is change for another time but cancelled", async () => {
+      const { queryByText, container } = await setUpForEdit();
+      apiCalls.updateUser = jest.fn().mockResolvedValue(mockSuccessUpdateUser);
+
+      const inputs = container.querySelectorAll("input");
+      const uploadInput = inputs[1];
+
+      const file = new File(["dummy content"], "example.png", {
+        type: "image/png",
+      });
+
+      fireEvent.change(uploadInput, { target: { files: [file] } });
+
+      await waitForDomChange();
+      const saveButton = queryByText("Save");
+      fireEvent.click(saveButton);
+
+      const editButtonAfterClickingSave = await waitForElement(() =>
+        queryByText("Edit")
+      );
+      fireEvent.click(editButtonAfterClickingSave);
+
+      const newFile = new File(["another content"], "example2.png", {
+        type: "image/png",
+      });
+
+      fireEvent.change(uploadInput, { target: { files: [newFile] } });
+
+      const cancelButton = queryByText("Cancel");
+      fireEvent.click(cancelButton);
+      const image = container.querySelector("img");
+      expect(image.src).toContain("/images/profile/profile1-update.png");
     });
   });
 });

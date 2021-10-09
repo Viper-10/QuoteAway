@@ -1,5 +1,6 @@
 package com.hoaxify.users;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.hoaxify.File.FileService;
 import com.hoaxify.exceptions.DuplicateUsernameException;
 import com.hoaxify.exceptions.NotFoundException;
 import com.hoaxify.users.vm.UserUpdateVM;
@@ -21,9 +23,12 @@ public class UserService {
 
 	PasswordEncoder passwordEncoder; 
 	
-	UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+	FileService fileService;
+	
+	UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService){
 		this.userRepository = userRepository; 
 		this.passwordEncoder = passwordEncoder; 
+		this.fileService = fileService; 
 	}
 	
 	public User save(User user) throws DuplicateUsernameException{
@@ -57,11 +62,18 @@ public class UserService {
 		// so we don't do findById or user name
 		
 		User inDB = userRepository.getOne(id); 
+		inDB.setDisplayName(userUpdate.getDisplayName());
 		
-		inDB.setDisplayName(userUpdate.getDisplayName());
-		String savedImageName = inDB.getUsername() + UUID.randomUUID().toString().replaceAll("-", "");
-		inDB.setImage(savedImageName);
-		inDB.setDisplayName(userUpdate.getDisplayName());
+		String savedImageName;
+		
+		if(userUpdate.getImage() != null) {
+			try {
+				savedImageName = fileService.saveProfileImage(userUpdate.getImage());
+				inDB.setImage(savedImageName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}		
+		}
 		
 		return userRepository.save(inDB); 
 	}

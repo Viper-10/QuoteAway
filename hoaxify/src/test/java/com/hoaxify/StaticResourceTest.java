@@ -108,8 +108,6 @@ public class StaticResourceTest{
 		
 		String cacheControl = result.getResponse().getHeaderValue("Cache-Control").toString(); 
 		assertThat(cacheControl).containsIgnoringCase("max-age=31536000");
-	
-		
 	}
 	
 	// clears upload-test/profiles after each test

@@ -2,6 +2,7 @@ package com.hoaxify;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,7 @@ import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.hoaxify.configuration.AppConfiguration;
 import com.hoaxify.error.ApiError;
 import com.hoaxify.shared.GenericResponse;
 import com.hoaxify.users.User;
@@ -52,10 +55,13 @@ public class UserControllerTest {
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	AppConfiguration appConfiguration; 
+	
 	private UserUpdateVM createValidUserUpdateVM() {
-		return UserUpdateVM.builder()
-				.displayName("newDisplayName")
-				.build(); 	
+		UserUpdateVM updateUser = new UserUpdateVM(); 
+		updateUser.setDisplayName("newDisplayName");
+		return updateUser; 
 	}
 	
 	private ResponseEntity<Object> postSignUp(){
@@ -84,6 +90,13 @@ public class UserControllerTest {
 	
 	private <T> ResponseEntity<T> getUsers(ParameterizedTypeReference<T> parameterizedTypeReference, String path) {
 		return testRestTemplate.exchange(path, HttpMethod.GET, null, parameterizedTypeReference);
+	}
+	
+	private String readFileToBase64(String fileName) throws IOException{
+		ClassPathResource imageResource = new ClassPathResource(fileName); 
+		byte[] imageArr = FileUtils.readFileToByteArray(imageResource.getFile());
+		String imageString = Base64.getEncoder().encodeToString(imageArr); 
+		return imageString;
 	}
 	
 	// executes before each test case. 
@@ -377,17 +390,12 @@ public class UserControllerTest {
 	@Test
 	public void putUser_withValidRequestBodyWithSupportedImageFromAuthorizedUser_receiveUserVMWithRandomImageName() throws IOException {
 		User user = userService.save(TestUtil.createValidUser("user1")); 
-		authenticate(user.getUsername()); 
-		
-		ClassPathResource imageResource = new ClassPathResource("profile.png"); 
-		
+		authenticate(user.getUsername()); 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
 		
-		byte[] imageArr = FileUtils.readFileToByteArray(imageResource.getFile());
-		String imageString = Base64.getEncoder().encodeToString(imageArr); 
+		String imageString = readFileToBase64("profile.png");  
 		
 		updatedUser.setImage(imageString);
-		
 		
 		HttpEntity<UserUpdateVM> requestEntity = new HttpEntity<>(updatedUser); 
 		ResponseEntity<UserVM> response = putUser(user.getId(), requestEntity, UserVM.class);
@@ -395,5 +403,33 @@ public class UserControllerTest {
 		
 		assertThat(response.getBody().getImage()).isNotEqualTo("profile-image.png");
 	}
+	
+	@Test
+	public void putUser_withValidRequestBodyWithSupportedImageFromAuthorizedUser_imageIsStoredUnderProfileFolder() throws IOException {
+		User user = userService.save(TestUtil.createValidUser("user1")); 
+		authenticate(user.getUsername()); 		
+		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
+		
+		String imageString = readFileToBase64("profile.png");  
+		
+		updatedUser.setImage(imageString);
+		
+		HttpEntity<UserUpdateVM> requestEntity = new HttpEntity<>(updatedUser); 
+		ResponseEntity<UserVM> response = putUser(user.getId(), requestEntity, UserVM.class);
+		
+		String storedImageName = response.getBody().getImage(); 
+		String profilePicturePath = appConfiguration.getFullProfileImagesPath() + "/" + storedImageName; 
+		
+		File storedImage = new File(profilePicturePath); 
+		assertThat(storedImage.exists()).isTrue(); 
+	}
+	
+	// clears upload-test/profiles after each test
+	@After 
+	public void cleanDirectory() throws IOException {
+		FileUtils.cleanDirectory(new File(appConfiguration.getFullProfileImagesPath()));
+		FileUtils.cleanDirectory(new File(appConfiguration.getFullAttachmentsPath()));
+	}
+	
 	
 }

@@ -41,5 +41,15 @@ describe("ProfileCard", () => {
       const displayInput = container.querySelector("input");
       expect(displayInput).toBeInTheDocument();
     });
+
+    it("displays file input when in Edit Mode is true", () => {
+      const { container } = render(
+        <ProfileCard user={user} inEditMode={true} />
+      );
+
+      const inputs = container.querySelectorAll("input");
+      const uploadInput = inputs[1];
+      expect(uploadInput.type).toBe("file");
+    });
   });
 });
