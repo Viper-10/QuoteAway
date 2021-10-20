@@ -27,5 +27,11 @@ describe("Input box", () => {
       const input = queryByPlaceholderText("Your display name");
       expect(input).toBeInTheDocument();
     });
+
+    it("has form-control-file class when type is file", () => {
+      const { container } = render(<Input type="file" />);
+      const input = container.querySelector("input");
+      expect(input.className).toBe("form-control-file");
+    });
   });
 });

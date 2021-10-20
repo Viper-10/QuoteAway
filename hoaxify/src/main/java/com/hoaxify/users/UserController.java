@@ -84,29 +84,15 @@ public class UserController {
 	}
 	
 	@PutMapping("{id:[0-9]+}")
+	// preauthorize to check if the logged in user is requesting to edit for his profile or another profile 
+	// because he can only edit his profile
 	@PreAuthorize("#id == principal.id")
-	UserVM updateUser(@PathVariable long id, @RequestBody(required = false) UserUpdateVM userUpdate) {
+	UserVM updateUser(@PathVariable long id, @RequestBody(required = false)  @Valid UserUpdateVM userUpdate) {
 		User updatedUser = userService.update(id, userUpdate); 
 		return new UserVM(updatedUser); 
 	}
 	
-	@ExceptionHandler({MethodArgumentNotValidException.class})
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	ApiError handleValidationException(MethodArgumentNotValidException exception, HttpServletRequest request) {
-		ApiError apiError = new ApiError(400, "Validation Error", request.getServletPath()); 
-		
-		BindingResult result = exception.getBindingResult(); 
-		
-		Map<String, String> validationErrors = new HashMap<>(); 
-		
-		for(FieldError fieldError : result.getFieldErrors()) {
-			validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
-		}
-		
-		apiError.setValidationErrors(validationErrors);
-		
-		return apiError; 
-	}	
+	
 	
 	
 }

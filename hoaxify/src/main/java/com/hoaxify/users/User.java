@@ -2,10 +2,15 @@ package com.hoaxify.users;
 
 import java.beans.Transient;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -17,6 +22,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hoaxify.quote.Hoax;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +38,12 @@ import lombok.NoArgsConstructor;
 public class User implements UserDetails{
 		
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
 //	@JsonView(UserViews.Base.class)
 	private long id; 
 	
@@ -64,6 +75,9 @@ public class User implements UserDetails{
 	
 	private String image;
 
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	private List<Hoax> hoaxes;
+	
 	@Override
 	@Transient
 	public Collection<? extends GrantedAuthority> getAuthorities() {
