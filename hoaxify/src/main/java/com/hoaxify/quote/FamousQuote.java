@@ -18,7 +18,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Hoax {
+public class FamousQuote {
 	
 	@Id
 	@GeneratedValue

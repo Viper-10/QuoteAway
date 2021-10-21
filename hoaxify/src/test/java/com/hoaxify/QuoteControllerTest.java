@@ -21,8 +21,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.hoaxify.error.ApiError;
-import com.hoaxify.quote.Hoax;
-import com.hoaxify.quote.HoaxRepository;
+import com.hoaxify.quote.FamousQuote;
+import com.hoaxify.quote.QuoteRepository;
 import com.hoaxify.users.User;
 import com.hoaxify.users.UserRepository;
 import com.hoaxify.users.UserService;
@@ -30,9 +30,9 @@ import com.hoaxify.users.UserService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class HoaxControllerTest {
+public class QuoteControllerTest {
 
-	private static final String API_1_0_HOAXES = "/api/1.0/hoaxes";
+	private static final String API_1_0_QUOTES = "/api/1.0/quotes";
 
 	@Autowired
 	TestRestTemplate testRestTemplate;
@@ -44,7 +44,7 @@ public class HoaxControllerTest {
 	UserRepository userRepository;
 	
 	@Autowired
-	HoaxRepository hoaxRepository;
+	QuoteRepository hoaxRepository;
 	
 	@Before
 	public void cleanup() {
@@ -57,7 +57,7 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_receiveOk() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = TestUtil.createValidHoax();
+		FamousQuote hoax = TestUtil.createValidHoax();
 		ResponseEntity<Object> response = postHoax(hoax, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
@@ -65,14 +65,14 @@ public class HoaxControllerTest {
 
 	@Test
 	public void postHoax_whenHoaxIsValidAndUserIsUnauthorized_receiveUnauthorized() {
-		Hoax hoax = TestUtil.createValidHoax();
+		FamousQuote hoax = TestUtil.createValidHoax();
 		ResponseEntity<Object> response = postHoax(hoax, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 	
 	@Test
 	public void postHoax_whenHoaxIsValidAndUserIsUnauthorized_receiveApiError() {
-		Hoax hoax = TestUtil.createValidHoax();
+		FamousQuote hoax = TestUtil.createValidHoax();
 		ResponseEntity<ApiError> response = postHoax(hoax, ApiError.class);
 		assertThat(response.getBody().getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 	}
@@ -81,7 +81,7 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_hoaxSavedToDatabase() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = TestUtil.createValidHoax();
+		FamousQuote hoax = TestUtil.createValidHoax();
 		postHoax(hoax, Object.class);
 		
 		assertThat(hoaxRepository.count()).isEqualTo(1);
@@ -91,10 +91,10 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_hoaxSavedToDatabaseWithTimestamp() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = TestUtil.createValidHoax();
+		FamousQuote hoax = TestUtil.createValidHoax();
 		postHoax(hoax, Object.class);
 		
-		Hoax inDB = hoaxRepository.findAll().get(0);
+		FamousQuote inDB = hoaxRepository.findAll().get(0);
 		
 		assertThat(inDB.getTimestamp()).isNotNull();
 	}
@@ -103,7 +103,7 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxContentNullAndUserIsAuthorized_receiveBadRequest() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = new Hoax();
+		FamousQuote hoax = new FamousQuote();
 		ResponseEntity<Object> response = postHoax(hoax, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
@@ -112,7 +112,7 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxContentLessThan10CharactersAndUserIsAuthorized_receiveBadRequest() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = new Hoax();
+		FamousQuote hoax = new FamousQuote();
 		hoax.setContent("123456789");
 		ResponseEntity<Object> response = postHoax(hoax, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -122,18 +122,19 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxContentIs5000CharactersAndUserIsAuthorized_receiveOk() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = new Hoax();
+		FamousQuote hoax = new FamousQuote();
 		String veryLongString = IntStream.rangeClosed(1, 5000).mapToObj(i -> "x").collect(Collectors.joining());
 		hoax.setContent(veryLongString);
 		ResponseEntity<Object> response = postHoax(hoax, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
 	
+	
 	@Test
 	public void postHoax_whenHoaxContentMoreThan5000CharactersAndUserIsAuthorized_receiveBadRequest() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = new Hoax();
+		FamousQuote hoax = new FamousQuote();
 		String veryLongString = IntStream.rangeClosed(1, 5001).mapToObj(i -> "x").collect(Collectors.joining());
 		hoax.setContent(veryLongString);
 		ResponseEntity<Object> response = postHoax(hoax, Object.class);
@@ -145,7 +146,7 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxContentNullAndUserIsAuthorized_receiveApiErrorWithValidationErrors() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = new Hoax();
+		FamousQuote hoax = new FamousQuote();
 		ResponseEntity<ApiError> response = postHoax(hoax, ApiError.class);
 		Map<String, String> validationErrors = response.getBody().getValidationErrors();
 		assertThat(validationErrors.get("content")).isNotNull();
@@ -155,10 +156,10 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_hoaxSavedWithAuthenticatedUserInfo() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = TestUtil.createValidHoax();
+		FamousQuote hoax = TestUtil.createValidHoax();
 		postHoax(hoax, Object.class);
 		
-		Hoax inDB = hoaxRepository.findAll().get(0);
+		FamousQuote inDB = hoaxRepository.findAll().get(0);
 		
 		assertThat(inDB.getUser().getUsername()).isEqualTo("user1");
 	}
@@ -167,15 +168,15 @@ public class HoaxControllerTest {
 	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_hoaxCanBeAccessedFromUserEntity() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		Hoax hoax = TestUtil.createValidHoax();
+		FamousQuote hoax = TestUtil.createValidHoax();
 		postHoax(hoax, Object.class);
 
 		User inDBUser = userRepository.findByUsername("user1");
 		assertThat(inDBUser.getHoaxes().size()).isEqualTo(1);
 		
 	}
-	private <T> ResponseEntity<T> postHoax(Hoax hoax, Class<T> responseType) {
-		return testRestTemplate.postForEntity(API_1_0_HOAXES, hoax, responseType);
+	private <T> ResponseEntity<T> postHoax(FamousQuote hoax, Class<T> responseType) {
+		return testRestTemplate.postForEntity(API_1_0_QUOTES, hoax, responseType);
 	}
 	
 

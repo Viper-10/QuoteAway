@@ -22,7 +22,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.hoaxify.quote.Hoax;
+import com.hoaxify.quote.FamousQuote;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -76,19 +76,13 @@ public class User implements UserDetails{
 	private String image;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-	private List<Hoax> hoaxes;
+	private List<FamousQuote> hoaxes;
 	
 	@Override
 	@Transient
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return AuthorityUtils.createAuthorityList("Role_USER");
 	}
-
-//	@Override
-//	@Transient
-//	public String getUsername() {
-//		return username;
-//	}
 
 	@Override
 	@Transient

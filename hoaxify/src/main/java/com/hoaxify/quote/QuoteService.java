@@ -7,16 +7,16 @@ import org.springframework.stereotype.Service;
 import com.hoaxify.users.User;
 
 @Service
-public class HoaxService {
+public class QuoteService {
 	
-	HoaxRepository hoaxRepository;
+	QuoteRepository hoaxRepository;
 
-	public HoaxService(HoaxRepository hoaxRepository) {
+	public QuoteService(QuoteRepository hoaxRepository) {
 		super();
 		this.hoaxRepository = hoaxRepository;
 	}
 	
-	public void save(User user, Hoax hoax) {
+	public void save(User user, FamousQuote hoax) {
 		hoax.setTimestamp(new Date());
 		hoax.setUser(user);
 		hoaxRepository.save(hoax);

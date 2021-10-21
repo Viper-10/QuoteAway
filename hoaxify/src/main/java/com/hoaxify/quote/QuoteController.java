@@ -13,13 +13,13 @@ import com.hoaxify.users.User;
 
 @RestController
 @RequestMapping("/api/1.0")
-public class HoaxController {
+public class QuoteController {
 	
 	@Autowired
-	HoaxService hoaxService;
+	QuoteService hoaxService;
 
-	@PostMapping("/hoaxes")
-	void createHoax(@Valid @RequestBody Hoax hoax, @CurrentUser User user) {
+	@PostMapping("/quotes")
+	void createHoax(@Valid @RequestBody FamousQuote hoax, @CurrentUser User user) {
 		hoaxService.save(user, hoax);
 	}
 	

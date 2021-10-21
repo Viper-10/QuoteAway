@@ -528,3 +528,12 @@ insert into quote (content, timestamp, user, id) values (?, ?, ?, ?) [22001-200]
 2021-10-20 14:27:01 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLDataException: Value too long for column "CONTENT VARCHAR(255)": "'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx... (5000)"; SQL statement:
 insert into quote (content, timestamp, user, id) values (?, ?, ?, ?) [22001-200]
+2021-10-21 10:21:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "CONTENT VARCHAR(255)": "'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx... (5000)"; SQL statement:
+insert into quote (content, timestamp, user_id, id) values (?, ?, ?, ?) [22001-200]
+2021-10-21 10:28:01 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "CONTENT VARCHAR(255)": "'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx... (5000)"; SQL statement:
+insert into quote (content, timestamp, user_id, id) values (?, ?, ?, ?) [22001-200]
+2021-10-21 10:32:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "CONTENT VARCHAR(255)": "'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx... (5000)"; SQL statement:
+insert into quote (content, timestamp, user_id, id) values (?, ?, ?, ?) [22001-200]

@@ -1,6 +1,6 @@
 package com.hoaxify;
 
-import com.hoaxify.quote.Hoax;
+import com.hoaxify.quote.FamousQuote;
 import com.hoaxify.users.User;
 
 public class TestUtil {
@@ -19,8 +19,8 @@ public class TestUtil {
 		return user; 
 	}
 	
-	public static Hoax createValidHoax() {
-		Hoax quote = new Hoax();
+	public static FamousQuote createValidHoax() {
+		FamousQuote quote = new FamousQuote();
 		quote.setContent("test content for the test quote");
 		return quote; 
 	}
