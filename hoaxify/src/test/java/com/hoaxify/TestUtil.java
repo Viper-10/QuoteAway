@@ -19,7 +19,7 @@ public class TestUtil {
 		return user; 
 	}
 	
-	public static FamousQuote createValidHoax() {
+	public static FamousQuote createValidQuote() {
 		FamousQuote quote = new FamousQuote();
 		quote.setContent("test content for the test quote");
 		return quote; 

@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,139 +48,144 @@ public class QuoteControllerTest {
 	UserRepository userRepository;
 	
 	@Autowired
-	QuoteRepository hoaxRepository;
+	QuoteRepository quoteRepository;
+	
+	@PersistenceUnit
+	private EntityManagerFactory entityManagerFactory;
 	
 	@Before
 	public void cleanup() {
-		hoaxRepository.deleteAll();
+		quoteRepository.deleteAll();
 		userRepository.deleteAll();
 		testRestTemplate.getRestTemplate().getInterceptors().clear();
 	}
 	
 	@Test
-	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_receiveOk() {
+	public void postQuote_whenquoteIsValidAndUserIsAuthorized_receiveOk() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = TestUtil.createValidHoax();
-		ResponseEntity<Object> response = postHoax(hoax, Object.class);
+		FamousQuote quote = TestUtil.createValidQuote();
+		ResponseEntity<Object> response = postQuote(quote, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
 	
 
 	@Test
-	public void postHoax_whenHoaxIsValidAndUserIsUnauthorized_receiveUnauthorized() {
-		FamousQuote hoax = TestUtil.createValidHoax();
-		ResponseEntity<Object> response = postHoax(hoax, Object.class);
+	public void postQuote_whenquoteIsValidAndUserIsUnauthorized_receiveUnauthorized() {
+		FamousQuote quote = TestUtil.createValidQuote();
+		ResponseEntity<Object> response = postQuote(quote, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 	
 	@Test
-	public void postHoax_whenHoaxIsValidAndUserIsUnauthorized_receiveApiError() {
-		FamousQuote hoax = TestUtil.createValidHoax();
-		ResponseEntity<ApiError> response = postHoax(hoax, ApiError.class);
+	public void postQuote_whenquoteIsValidAndUserIsUnauthorized_receiveApiError() {
+		FamousQuote quote = TestUtil.createValidQuote();
+		ResponseEntity<ApiError> response = postQuote(quote, ApiError.class);
 		assertThat(response.getBody().getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 	}
 	
 	@Test
-	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_hoaxSavedToDatabase() {
+	public void postQuote_whenquoteIsValidAndUserIsAuthorized_quoteSavedToDatabase() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = TestUtil.createValidHoax();
-		postHoax(hoax, Object.class);
+		FamousQuote quote = TestUtil.createValidQuote();
+		postQuote(quote, Object.class);
 		
-		assertThat(hoaxRepository.count()).isEqualTo(1);
+		assertThat(quoteRepository.count()).isEqualTo(1);
 	}
 	
 	@Test
-	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_hoaxSavedToDatabaseWithTimestamp() {
+	public void postQuote_whenquoteIsValidAndUserIsAuthorized_quoteSavedToDatabaseWithTimestamp() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = TestUtil.createValidHoax();
-		postHoax(hoax, Object.class);
+		FamousQuote quote = TestUtil.createValidQuote();
+		postQuote(quote, Object.class);
 		
-		FamousQuote inDB = hoaxRepository.findAll().get(0);
+		FamousQuote inDB = quoteRepository.findAll().get(0);
 		
 		assertThat(inDB.getTimestamp()).isNotNull();
 	}
 	
 	@Test
-	public void postHoax_whenHoaxContentNullAndUserIsAuthorized_receiveBadRequest() {
+	public void postQuote_whenquoteContentNullAndUserIsAuthorized_receiveBadRequest() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = new FamousQuote();
-		ResponseEntity<Object> response = postHoax(hoax, Object.class);
+		FamousQuote quote = new FamousQuote();
+		ResponseEntity<Object> response = postQuote(quote, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 
 	@Test
-	public void postHoax_whenHoaxContentLessThan10CharactersAndUserIsAuthorized_receiveBadRequest() {
+	public void postQuote_whenquoteContentLessThan10CharactersAndUserIsAuthorized_receiveBadRequest() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = new FamousQuote();
-		hoax.setContent("123456789");
-		ResponseEntity<Object> response = postHoax(hoax, Object.class);
+		FamousQuote quote = new FamousQuote();
+		quote.setContent("123456789");
+		ResponseEntity<Object> response = postQuote(quote, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
-	public void postHoax_whenHoaxContentIs5000CharactersAndUserIsAuthorized_receiveOk() {
+	public void postQuote_whenquoteContentIs5000CharactersAndUserIsAuthorized_receiveOk() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = new FamousQuote();
+		FamousQuote quote = new FamousQuote();
 		String veryLongString = IntStream.rangeClosed(1, 5000).mapToObj(i -> "x").collect(Collectors.joining());
-		hoax.setContent(veryLongString);
-		ResponseEntity<Object> response = postHoax(hoax, Object.class);
+		quote.setContent(veryLongString);
+		ResponseEntity<Object> response = postQuote(quote, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
 	
 	
 	@Test
-	public void postHoax_whenHoaxContentMoreThan5000CharactersAndUserIsAuthorized_receiveBadRequest() {
+	public void postQuote_whenquoteContentMoreThan5000CharactersAndUserIsAuthorized_receiveBadRequest() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = new FamousQuote();
+		FamousQuote quote = new FamousQuote();
 		String veryLongString = IntStream.rangeClosed(1, 5001).mapToObj(i -> "x").collect(Collectors.joining());
-		hoax.setContent(veryLongString);
-		ResponseEntity<Object> response = postHoax(hoax, Object.class);
+		quote.setContent(veryLongString);
+		ResponseEntity<Object> response = postQuote(quote, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 
 	@Test
-	public void postHoax_whenHoaxContentNullAndUserIsAuthorized_receiveApiErrorWithValidationErrors() {
+	public void postQuote_whenquoteContentNullAndUserIsAuthorized_receiveApiErrorWithValidationErrors() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = new FamousQuote();
-		ResponseEntity<ApiError> response = postHoax(hoax, ApiError.class);
+		FamousQuote quote = new FamousQuote();
+		ResponseEntity<ApiError> response = postQuote(quote, ApiError.class);
 		Map<String, String> validationErrors = response.getBody().getValidationErrors();
 		assertThat(validationErrors.get("content")).isNotNull();
 	}
 	
 	@Test
-	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_hoaxSavedWithAuthenticatedUserInfo() {
+	public void postQuote_whenquoteIsValidAndUserIsAuthorized_quoteSavedWithAuthenticatedUserInfo() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = TestUtil.createValidHoax();
-		postHoax(hoax, Object.class);
+		FamousQuote quote = TestUtil.createValidQuote();
+		postQuote(quote, Object.class);
 		
-		FamousQuote inDB = hoaxRepository.findAll().get(0);
+		FamousQuote inDB = quoteRepository.findAll().get(0);
 		
 		assertThat(inDB.getUser().getUsername()).isEqualTo("user1");
 	}
 	
 	@Test
-	public void postHoax_whenHoaxIsValidAndUserIsAuthorized_hoaxCanBeAccessedFromUserEntity() {
-		userService.save(TestUtil.createValidUser("user1"));
+	public void postQuote_whenquoteIsValidAndUserIsAuthorized_quoteCanBeAccessedFromUserEntity() {
+		User user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		FamousQuote hoax = TestUtil.createValidHoax();
-		postHoax(hoax, Object.class);
-
-		User inDBUser = userRepository.findByUsername("user1");
-		assertThat(inDBUser.getHoaxes().size()).isEqualTo(1);
+		FamousQuote quote = TestUtil.createValidQuote();
+		postQuote(quote, Object.class);
+		
+		EntityManager entityManager = entityManagerFactory.createEntityManager(); 
+		
+		User inDBUser = entityManager.find(User.class, user.getId());
+		assertThat(inDBUser.getQuotes().size()).isEqualTo(1);
 		
 	}
-	private <T> ResponseEntity<T> postHoax(FamousQuote hoax, Class<T> responseType) {
-		return testRestTemplate.postForEntity(API_1_0_QUOTES, hoax, responseType);
+	private <T> ResponseEntity<T> postQuote(FamousQuote quote, Class<T> responseType) {
+		return testRestTemplate.postForEntity(API_1_0_QUOTES, quote, responseType);
 	}
 	
 
@@ -187,6 +196,6 @@ public class QuoteControllerTest {
 	
 	@After
 	public void cleanupAfter() {
-		hoaxRepository.deleteAll();
+		quoteRepository.deleteAll();
 	}
 }

@@ -75,8 +75,8 @@ public class User implements UserDetails{
 	
 	private String image;
 
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-	private List<FamousQuote> hoaxes;
+	@OneToMany(mappedBy = "user")
+	private List<FamousQuote> quotes;
 	
 	@Override
 	@Transient
