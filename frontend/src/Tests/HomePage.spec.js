@@ -32,6 +32,13 @@ apiCalls.listUsers = jest.fn().mockResolvedValue({
     size: 3,
   },
 });
+apiCalls.loadQuotes = jest.fn().mockResolvedValue({
+  data: {
+    content: [],
+    number: 0,
+    size: 3,
+  },
+});
 describe("Home page", () => {
   describe("Layout", () => {
     it("has root page div", () => {

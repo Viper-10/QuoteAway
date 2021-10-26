@@ -83,4 +83,26 @@ describe("apicalls", () => {
       expect(path).toBe("/api/1.0/quotes");
     });
   });
+
+  describe("loadQuotes", () => {
+    it("calls /api/1.0/quotes?page=0&size=5&sord=id,desc when no param provided", () => {
+      const mockGetQuotes = jest.fn();
+      axios.get = mockGetQuotes;
+      apiCalls.loadQuotes();
+
+      expect(mockGetQuotes).toBeCalledWith(
+        "/api/1.0/quotes?page=0&size=5&sort=id,desc"
+      );
+    });
+
+    it("calls /api/1.0/users/user1/quotes?page=0&size=5&sord=id,desc when no param provided", () => {
+      const mockGetQuotes = jest.fn();
+      axios.get = mockGetQuotes;
+      apiCalls.loadQuotes("user1");
+
+      expect(mockGetQuotes).toBeCalledWith(
+        "/api/1.0/users/user1/quotes?page=0&size=5&sort=id,desc"
+      );
+    });
+  });
 });

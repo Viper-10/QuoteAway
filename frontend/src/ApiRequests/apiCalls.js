@@ -37,6 +37,14 @@ export const getUser = (username) => {
 export const updateUser = (userId, body) => {
   return axios.put("/api/1.0/users/" + userId, body);
 };
+
 export const postQuote = (quote) => {
   return axios.post("/api/1.0/quotes", quote);
+};
+
+export const loadQuotes = (username) => {
+  const basePath = username
+    ? `/api/1.0/users/${username}/quotes`
+    : "/api/1.0/quotes";
+  return axios.get(basePath + "?page=0&size=5&sort=id,desc");
 };
