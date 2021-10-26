@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/hoaxify-logo.png";
+import logo from "../assets/quote1.png";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import ProfileImageWithDefault from "./ProfileImageWithDefault";
@@ -116,7 +116,7 @@ class TopBar extends React.Component {
         <div className="container">
           <nav className="navbar navbar-light navbar-expand">
             <Link to="/" className="navbar-brand">
-              <img src={logo} width="60" alt="Hoaxify" /> Hoaxify
+              <img src={logo} width="60" alt="QuoteAway" />
             </Link>
             {links}
           </nav>
