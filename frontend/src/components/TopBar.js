@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/quote1.png";
+import logo from "../assets/QuoteAway2.png";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import ProfileImageWithDefault from "./ProfileImageWithDefault";

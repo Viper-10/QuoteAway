@@ -40,7 +40,7 @@ describe("TopBar", () => {
     it("has application logo", () => {
       const { container } = setup();
       const image = container.querySelector("img");
-      expect(image.src).toContain("quote1.png");
+      expect(image.src).toContain("QuoteAway2.png");
     });
 
     it("has link to home from logo", () => {

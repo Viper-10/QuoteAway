@@ -48,3 +48,28 @@ export const loadQuotes = (username) => {
     : "/api/1.0/quotes";
   return axios.get(basePath + "?page=0&size=5&sort=id,desc");
 };
+
+export const loadOldQuotes = (quoteId, username) => {
+  const basePath = username
+    ? `/api/1.0/users/${username}/quotes`
+    : "/api/1.0/quotes";
+
+  const path = `${basePath}/${quoteId}?direction=before&page=0&size=5&sort=id,desc`;
+  return axios.get(path);
+};
+export const loadNewQuotes = (quoteId, username) => {
+  const basePath = username
+    ? `/api/1.0/users/${username}/quotes`
+    : "/api/1.0/quotes";
+
+  const path = `${basePath}/${quoteId}?direction=after&sort=id,desc`;
+  return axios.get(path);
+};
+export const loadNewQuoteCount = (quoteId, username) => {
+  const basePath = username
+    ? `/api/1.0/users/${username}/quotes`
+    : "/api/1.0/quotes";
+
+  const path = `${basePath}/${quoteId}?direction=after&count=true`;
+  return axios.get(path);
+};

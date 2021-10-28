@@ -105,4 +105,67 @@ describe("apicalls", () => {
       );
     });
   });
+  describe("loadOldQuotes", () => {
+    it("calls /api/1.0/quotes/5?direction=before&page=0&size=5&sort=id,desc when quote id param provided", () => {
+      const mockGetQuotes = jest.fn();
+      axios.get = mockGetQuotes;
+      apiCalls.loadOldQuotes(5);
+
+      expect(mockGetQuotes).toBeCalledWith(
+        "/api/1.0/quotes/5?direction=before&page=0&size=5&sort=id,desc"
+      );
+    });
+
+    it("calls /api/1.0/quotes/5?direction=before&page=0&size=5&sort=id,desc when quote id param provided", () => {
+      const mockGetQuotes = jest.fn();
+      axios.get = mockGetQuotes;
+      apiCalls.loadOldQuotes(5, "user3");
+
+      expect(mockGetQuotes).toBeCalledWith(
+        "/api/1.0/users/user3/quotes/5?direction=before&page=0&size=5&sort=id,desc"
+      );
+    });
+  });
+  describe("loadNewQuotes", () => {
+    it("calls /api/1.0/quotes/5?direction=after&sort=id,desc when quote id param provided", () => {
+      const mockGetQuotes = jest.fn();
+      axios.get = mockGetQuotes;
+      apiCalls.loadNewQuotes(5);
+
+      expect(mockGetQuotes).toBeCalledWith(
+        "/api/1.0/quotes/5?direction=after&sort=id,desc"
+      );
+    });
+
+    it("calls /api/1.0/users/user3/quotes/5?direction=after&sort=id,desc when quote id param provided", () => {
+      const mockGetQuotes = jest.fn();
+      axios.get = mockGetQuotes;
+      apiCalls.loadNewQuotes(5, "user3");
+
+      expect(mockGetQuotes).toBeCalledWith(
+        "/api/1.0/users/user3/quotes/5?direction=after&sort=id,desc"
+      );
+    });
+  });
+  describe("loadNewQuoteCount", () => {
+    it("calls /api/1.0/quotes/5?direction=after&count=true when quote id param provided", () => {
+      const mockGetQuotes = jest.fn();
+      axios.get = mockGetQuotes;
+      apiCalls.loadNewQuoteCount(5);
+
+      expect(mockGetQuotes).toBeCalledWith(
+        "/api/1.0/quotes/5?direction=after&count=true"
+      );
+    });
+
+    it("calls /api/1.0/users/user3/quotes/5?direction=after&count=true when quote id param provided", () => {
+      const mockGetQuotes = jest.fn();
+      axios.get = mockGetQuotes;
+      apiCalls.loadNewQuoteCount(5, "user3");
+
+      expect(mockGetQuotes).toBeCalledWith(
+        "/api/1.0/users/user3/quotes/5?direction=after&count=true"
+      );
+    });
+  });
 });

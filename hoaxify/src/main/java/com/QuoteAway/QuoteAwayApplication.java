@@ -1,5 +1,6 @@
 package com.QuoteAway;
 
+import java.util.Date;
 import java.util.stream.IntStream;
 
 import org.springframework.boot.CommandLineRunner;
@@ -9,6 +10,8 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
+import com.QuoteAway.quote.FamousQuote;
+import com.QuoteAway.quote.QuoteService;
 import com.QuoteAway.users.User;
 import com.QuoteAway.users.UserService;
 
@@ -18,13 +21,12 @@ public class QuoteAwayApplication {
 		SpringApplication.run(QuoteAwayApplication.class, args);
 	}
 	
-	@Bean
-	
+	@Bean	
 	// This is for profile dev, so we don't need to worry about this interfering with tests as they're 
 	// marked as profile test for which this wont' run
 	
 	@Profile("dev")
-	CommandLineRunner run(UserService userService) {
+	CommandLineRunner run(UserService userService, QuoteService quoteService) {
 		return (args) -> {
 				IntStream.rangeClosed(1, 15)
 						.mapToObj(i -> {
@@ -34,7 +36,7 @@ public class QuoteAwayApplication {
 					return user; 
 					
 				}).forEach(userService::save);
-			
+						
 		};
 	}
 }

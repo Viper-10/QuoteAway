@@ -2,6 +2,7 @@ package com.QuoteAway;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -300,6 +301,193 @@ public class QuoteControllerTest {
 		assertThat(response.getBody().getTotalElements()).isEqualTo(5);
 	}	
 	
+	@Test
+	public void getOldQuotes_whenThereAreNoQuotes_receiveOk() {
+		ResponseEntity<Object> response = getOldQuotes(5, new ParameterizedTypeReference<Object>() {}); 
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	}
+	
+	@Test
+	public void getOldQuotes_whenThereAreNoQuotes_receivePageWithItemsProvidedId() {
+		
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		FamousQuote fourth = quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		ResponseEntity<TestPage<Object>> response = getOldQuotes(fourth.getId(), new ParameterizedTypeReference<TestPage<Object>>() {}); 
+		assertThat(response.getBody().getTotalElements()).isEqualTo(3);
+	}
+	
+	@Test
+	public void getOldQuotesOfUser_whenUserExistThereAreNoQuotes_receiveOk() {
+		userService.save(TestUtil.createValidUser("user1"));
+		ResponseEntity<Object> response = getOldQuotesOfUser(5, "user1", new ParameterizedTypeReference<Object>() {}); 
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	}
+	
+	@Test
+	public void getOldQuotesOfUser_whenUserDoesNotExist_receiveNotFound() {
+		ResponseEntity<Object> response = getOldQuotesOfUser(5, "user1", new ParameterizedTypeReference<Object>() {}); 
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
+	
+	@Test
+	public void getOldQuotesOfUser_whenUserExistAndThereAreQuotes_receivePageWithItemsBeforeProvidedId() {
+		
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		FamousQuote fourth = quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		ResponseEntity<TestPage<Object>> response = getOldQuotesOfUser(fourth.getId(), "user1", new ParameterizedTypeReference<TestPage<Object>>() {}); 
+		assertThat(response.getBody().getTotalElements()).isEqualTo(3);
+	}
+
+	@Test
+	public void getOldQuotesOfUser_whenUserExistAndThereAreNoQuotes_receivePageWithZeroItemsBeforeProvidedId() {
+		
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		FamousQuote fourth = quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		userService.save(TestUtil.createValidUser("user2"));
+		
+		ResponseEntity<TestPage<Object>> response = getOldQuotesOfUser(fourth.getId(), "user2", new ParameterizedTypeReference<TestPage<Object>>() {}); 
+		assertThat(response.getBody().getTotalElements()).isEqualTo(0);
+	}
+	
+	@Test
+	public void getNewQuotes_whenThereAreQuotes_receiveListOfItemsAfterProvidedId() {
+		
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		FamousQuote fourth = quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+	
+		ResponseEntity<List<Object>> response = getNewQuotes(fourth.getId(), new ParameterizedTypeReference<List<Object>>() {}); 
+		assertThat(response.getBody().size()).isEqualTo(1);
+	}
+	
+	@Test
+	public void getNewQuotesOfUser_whenUserExistThereAreNoQuotes_receiveOk() {
+		userService.save(TestUtil.createValidUser("user1"));
+		ResponseEntity<Object> response = getOldQuotesOfUser(5, "user1", new ParameterizedTypeReference<Object>() {}); 
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	}
+	
+	@Test
+	public void getNewQuotesOfUser_whenUserExistAndThereAreQuotes_receivePageWithItemsAfterProvidedId() {
+		
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		FamousQuote fourth = quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		ResponseEntity<List<Object>> response = getNewQuotesOfUser(fourth.getId(), "user1", new ParameterizedTypeReference<List<Object>>() {}); 
+		assertThat(response.getBody().size()).isEqualTo(1);
+	}
+	
+	@Test
+	public void getNewQuotesOfUser_whenUserDoesNotExist_receiveNotFound() {
+		ResponseEntity<Object> response = getNewQuotesOfUser(5, "user1", new ParameterizedTypeReference<Object>() {}); 
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
+
+	@Test
+	public void getNewQuotesOfUser_whenUserExistAndThereAreNoQuotes_receivePageWithZeroItemsBeforeProvidedId() {
+		
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		FamousQuote fourth = quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		userService.save(TestUtil.createValidUser("user2"));
+		
+		ResponseEntity<List<Object>> response = getNewQuotesOfUser(fourth.getId(), "user2", new ParameterizedTypeReference<List<Object>>() {}); 
+		assertThat(response.getBody().size()).isEqualTo(0);
+	}	
+	
+	@Test
+	public void getNewQuoteCount_whenThereAreQuotes_receiveCountAfterProvidedId() {
+		
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		FamousQuote fourth = quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		ResponseEntity<Map<String, Long>> response = getNewQuoteCount(fourth.getId(), new ParameterizedTypeReference<Map<String, Long>>() {}); 
+		assertThat(response.getBody().get("count")).isEqualTo(1);
+	}
+	
+	@Test
+	public void getNewQuoteCountOfUser_whenThereAreQuotes_receiveCountAfterProvidedId() {
+		
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		FamousQuote fourth = quoteService.save(user, TestUtil.createValidQuote());
+		quoteService.save(user, TestUtil.createValidQuote());
+		
+		userService.save(TestUtil.createValidUser("user2"));
+		
+		ResponseEntity<Map<String, Long>> response = getNewQuoteCountOfUser(fourth.getId(), "user1", new ParameterizedTypeReference<Map<String, Long>>() {}); 
+		assertThat(response.getBody().get("count")).isEqualTo(1);
+	}	
+
+	public <T> ResponseEntity<T> getNewQuotes(long quoteId, ParameterizedTypeReference<T> responseType){
+		String path = API_1_0_QUOTES + "/" + quoteId + "?direction=after&page=0&size=5&sort=id,desc";
+		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);	
+	}
+	
+	public <T> ResponseEntity<T> getNewQuoteCount(long hoaxId, ParameterizedTypeReference<T> responseType){
+		String path = API_1_0_QUOTES + "/" + hoaxId +"?direction=after&count=true";
+		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);
+	}
+
+	
+	public <T> ResponseEntity<T> getNewQuotesOfUser(long quoteId, String username, ParameterizedTypeReference<T> responseType){
+		String path = "/api/1.0/users/"+ username + "/quotes/" + quoteId + "?direction=after&page=0&size=5&sort=id,desc";
+		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);	
+	}
+	public <T> ResponseEntity<T> getNewQuoteCountOfUser(long quoteId, String username, ParameterizedTypeReference<T> responseType){
+		String path = "/api/1.0/users/"+ username + "/quotes/" + quoteId + "?direction=after&count=true";
+		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);	
+	}
+	
+	public <T> ResponseEntity<T> getOldQuotes(long quoteId, ParameterizedTypeReference<T> responseType){
+		String path = API_1_0_QUOTES + "/" + quoteId + "?direction=before&page=0&size=5&sort=id,desc";
+		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);	
+	}
+	
+	public <T> ResponseEntity<T> getOldQuotesOfUser(long quoteId, String username, ParameterizedTypeReference<T> responseType){
+		String path = "/api/1.0/users/"+ username + "/quotes/" + quoteId + "?direction=before&page=0&size=5&sort=id,desc";
+		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);	
+	}
 	
 	private <T> ResponseEntity<T> postQuote(FamousQuote quote, Class<T> responseType) {
 		return testRestTemplate.postForEntity(API_1_0_QUOTES, quote, responseType);
