@@ -9,6 +9,29 @@ import QuoteFeed from "../components/QuoteFeed";
 import * as apiCalls from "../ApiRequests/apiCalls";
 import { MemoryRouter } from "react-router-dom";
 
+const originalSetInterval = window.setInterval;
+const originalClearInterval = window.clearInterval;
+
+let timedFunction;
+
+const useFakeIntervals = () => {
+  window.setInterval = (callback, interval) => {
+    timedFunction = callback;
+  };
+  window.clearInterval = () => {
+    timedFunction = undefined;
+  };
+};
+
+const useRealIntervals = () => {
+  window.setInterval = originalSetInterval;
+  window.clearInterval = originalClearInterval;
+};
+
+const runTimer = () => {
+  timedFunction && timedFunction();
+};
+
 const setup = (props) => {
   return render(
     <MemoryRouter>
@@ -22,7 +45,21 @@ const mockEmptyResponse = {
     content: [],
   },
 };
-
+const mockSuccessGetNewQuotesList = {
+  data: [
+    {
+      id: 21,
+      content: "This is the newest quote",
+      date: 1561294668539,
+      user: {
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+      },
+    },
+  ],
+};
 const mockSuccessGetQuotesSinglePage = {
   data: {
     content: [
@@ -121,6 +158,7 @@ describe("QuoteFeed", () => {
       expect(parameter).toBeUndefined();
     });
     it("calls loadNewQuoteCount with topQuote id", async () => {
+      useFakeIntervals();
       apiCalls.loadQuotes = jest
         .fn()
         .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
@@ -128,11 +166,15 @@ describe("QuoteFeed", () => {
         .fn()
         .mockResolvedValue({ data: { count: 1 } });
       const { queryByText } = setup();
+      await waitForDomChange();
+      runTimer();
       await waitForElement(() => queryByText("There is 1 new quote"));
       const firstParam = apiCalls.loadNewQuoteCount.mock.calls[0][0];
       expect(firstParam).toBe(10);
+      useRealIntervals();
     });
     it("calls loadNewQuoteCount with topQuote id and username when rendered with user property", async () => {
+      useFakeIntervals();
       apiCalls.loadQuotes = jest
         .fn()
         .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
@@ -140,10 +182,14 @@ describe("QuoteFeed", () => {
         .fn()
         .mockResolvedValue({ data: { count: 1 } });
       const { queryByText } = setup({ user: "user1" });
+      await waitForDomChange();
+      runTimer();
       await waitForElement(() => queryByText("There is 1 new quote"));
       expect(apiCalls.loadNewQuoteCount).toHaveBeenCalledWith(10, "user1");
+      useRealIntervals();
     });
     it("displays new quote count as 1 after loadNewQuoteCount success", async () => {
+      useFakeIntervals();
       apiCalls.loadQuotes = jest
         .fn()
         .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
@@ -151,12 +197,16 @@ describe("QuoteFeed", () => {
         .fn()
         .mockResolvedValue({ data: { count: 1 } });
       const { queryByText } = setup({ user: "user1" });
+      await waitForDomChange();
+      runTimer();
       const newQuoteCount = await waitForElement(() =>
         queryByText("There is 1 new quote")
       );
       expect(newQuoteCount).toBeInTheDocument();
+      useRealIntervals();
     });
     it("displays new quote count constantly", async () => {
+      useFakeIntervals();
       apiCalls.loadQuotes = jest
         .fn()
         .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
@@ -164,16 +214,21 @@ describe("QuoteFeed", () => {
         .fn()
         .mockResolvedValue({ data: { count: 1 } });
       const { queryByText } = setup({ user: "user1" });
+      await waitForDomChange();
+      runTimer();
       await waitForElement(() => queryByText("There is 1 new quote"));
       apiCalls.loadNewQuoteCount = jest
         .fn()
         .mockResolvedValue({ data: { count: 2 } });
+      runTimer();
       const newQuoteCount = await waitForElement(() =>
         queryByText("There are 2 new quotes")
       );
       expect(newQuoteCount).toBeInTheDocument();
-    }, 7000);
-    it("does not call loadNewQuoteCount after component is unmounted", async (done) => {
+      useRealIntervals();
+    });
+    it("does not call loadNewQuoteCount after component is unmounted", async () => {
+      useFakeIntervals();
       apiCalls.loadQuotes = jest
         .fn()
         .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
@@ -181,23 +236,27 @@ describe("QuoteFeed", () => {
         .fn()
         .mockResolvedValue({ data: { count: 1 } });
       const { queryByText, unmount } = setup({ user: "user1" });
+      await waitForDomChange();
+      runTimer();
       await waitForElement(() => queryByText("There is 1 new quote"));
       unmount();
-      setTimeout(() => {
-        expect(apiCalls.loadNewQuoteCount).toHaveBeenCalledTimes(1);
-        done();
-      }, 3500);
-    }, 7000);
+      expect(apiCalls.loadNewQuoteCount).toHaveBeenCalledTimes(1);
+      useRealIntervals();
+    });
     it("displays new quote count as 1 after loadNewQuoteCount success when user does not have quotes initially", async () => {
+      useFakeIntervals();
       apiCalls.loadQuotes = jest.fn().mockResolvedValue(mockEmptyResponse);
       apiCalls.loadNewQuoteCount = jest
         .fn()
         .mockResolvedValue({ data: { count: 1 } });
       const { queryByText } = setup({ user: "user1" });
+      await waitForDomChange();
+      runTimer();
       const newQuoteCount = await waitForElement(() =>
         queryByText("There is 1 new quote")
       );
       expect(newQuoteCount).toBeInTheDocument();
+      useRealIntervals();
     });
   });
   describe("Layout", () => {
@@ -300,6 +359,113 @@ describe("QuoteFeed", () => {
       fireEvent.click(loadMore);
       await waitForElement(() => queryByText("This is the oldest quote"));
       expect(queryByText("Load More")).not.toBeInTheDocument();
+    });
+
+    // load new quotes
+    it("calls loadNewQuotes with quote id when clicking New quote Count Card", async () => {
+      useFakeIntervals();
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      apiCalls.loadNewQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetNewQuotesList);
+      const { queryByText } = setup();
+      await waitForDomChange();
+      runTimer();
+      const newQuoteCount = await waitForElement(() =>
+        queryByText("There is 1 new quote")
+      );
+      fireEvent.click(newQuoteCount);
+      const firstParam = apiCalls.loadNewQuotes.mock.calls[0][0];
+      expect(firstParam).toBe(10);
+      useRealIntervals();
+    });
+    it("calls loadNewQuotes with quote id and username when clicking New quote Count Card", async () => {
+      useFakeIntervals();
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      apiCalls.loadNewQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetNewQuotesList);
+      const { queryByText } = setup({ user: "user1" });
+      await waitForDomChange();
+      runTimer();
+      const newQuoteCount = await waitForElement(() =>
+        queryByText("There is 1 new quote")
+      );
+      fireEvent.click(newQuoteCount);
+      expect(apiCalls.loadNewQuotes).toHaveBeenCalledWith(10, "user1");
+      useRealIntervals();
+    });
+    it("displays loaded new quote when loadNewQuotes api call success", async () => {
+      useFakeIntervals();
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      apiCalls.loadNewQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetNewQuotesList);
+      const { queryByText } = setup({ user: "user1" });
+      await waitForDomChange();
+      runTimer();
+      const newQuoteCount = await waitForElement(() =>
+        queryByText("There is 1 new quote")
+      );
+      fireEvent.click(newQuoteCount);
+      const newHoax = await waitForElement(() =>
+        queryByText("This is the newest quote")
+      );
+      expect(newHoax).toBeInTheDocument();
+      useRealIntervals();
+    });
+    it("hides new quote count when loadNewQuotes api call success", async () => {
+      useFakeIntervals();
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      apiCalls.loadNewQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetNewQuotesList);
+      const { queryByText } = setup({ user: "user1" });
+      await waitForDomChange();
+      runTimer();
+      const newQuoteCount = await waitForElement(() =>
+        queryByText("There is 1 new quote")
+      );
+      fireEvent.click(newQuoteCount);
+      await waitForElement(() => queryByText("This is the newest quote"));
+      expect(queryByText("There is 1 new quote")).not.toBeInTheDocument();
+      useRealIntervals();
+    });
+
+    // progress indicator
+    it("does not allow loadOldQuotes to be called when there is an active api call about it", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadOldQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesLastOfMultiPage);
+      const { queryByText } = setup();
+      const loadMore = await waitForElement(() => queryByText("Load More"));
+      fireEvent.click(loadMore);
+      fireEvent.click(loadMore);
+
+      expect(apiCalls.loadOldQuotes).toHaveBeenCalledTimes(1);
     });
   });
 });
