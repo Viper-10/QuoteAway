@@ -11,6 +11,7 @@ class QuoteFeed extends Component {
     isLoadingQuotes: false,
     newQuoteCount: 0,
     isLoadingOldQuotes: false,
+    isLoadingNewQuotes: false,
   };
 
   componentDidMount() {
@@ -38,6 +39,9 @@ class QuoteFeed extends Component {
   };
 
   onClickLoadMore = () => {
+    if (this.state.isLoadingOldQuotes) {
+      return;
+    }
     this.setState({ isLoadingOldQuotes: true });
     const quotes = this.state.page.content;
     if (quotes.length === 0) {
@@ -50,22 +54,31 @@ class QuoteFeed extends Component {
         const page = { ...this.state.page };
         page.content = [...page.content, ...response.data.content];
         page.last = response.data.last;
-        this.setState({ page });
+        this.setState({ page, isLoadingOldQuotes: false });
+      })
+      .catch((error) => {
+        this.setState({ isLoadingOldQuotes: false });
       });
   };
 
   onClickLoadNew = () => {
+    if (this.state.isLoadingNewQuotes) return;
     const quotes = this.state.page.content;
     let topQuoteId = 0;
     if (quotes.length > 0) {
       topQuoteId = quotes[0].id;
     }
-
-    apiCalls.loadNewQuotes(topQuoteId, this.props.user).then((response) => {
-      const page = { ...this.state.page };
-      page.content = [...response.data, ...page.content];
-      this.setState({ page, newQuoteCount: 0 });
-    });
+    this.setState({ isLoadingNewQuotes: true });
+    apiCalls
+      .loadNewQuotes(topQuoteId, this.props.user)
+      .then((response) => {
+        const page = { ...this.state.page };
+        page.content = [...response.data, ...page.content];
+        this.setState({ page, newQuoteCount: 0, isLoadingNewQuotes: false });
+      })
+      .catch((error) => {
+        this.setState({ isLoadingNewQuotes: false });
+      });
   };
 
   render() {
@@ -81,17 +94,21 @@ class QuoteFeed extends Component {
       );
     }
 
+    let newQuoteMessage =
+      this.state.newQuoteCount === 1
+        ? "There is 1 new quote"
+        : `There are ${this.state.newQuoteCount} new quotes`;
     return (
       <div>
         {this.state.newQuoteCount > 0 && (
           <div
             className="card card-header text-center"
             onClick={this.onClickLoadNew}
-            style={{ cursor: "pointer" }}
+            style={{
+              cursor: this.state.isLoadingNewQuotes ? "not-allowed" : "pointer",
+            }}
           >
-            {this.state.newQuoteCount === 1
-              ? "There is 1 new quote"
-              : `There are ${this.state.newQuoteCount} new quotes`}
+            {this.state.isLoadingNewQuotes ? <Spinner /> : newQuoteMessage}
           </div>
         )}
         {this.state.page.content.map((quote) => {
@@ -100,10 +117,12 @@ class QuoteFeed extends Component {
         {this.state.page.last === false && (
           <div
             className="card card-header text-center"
-            onClick={!this.state.isLoadingOldQuotes && this.onClickLoadMore}
-            style={{ cursor: "pointer" }}
+            onClick={this.onClickLoadMore}
+            style={{
+              cursor: this.state.isLoadingOldQuotes ? "not-allowed" : "pointer",
+            }}
           >
-            Load More
+            {this.state.isLoadingOldQuotes ? <Spinner /> : "Load More"}
           </div>
         )}
       </div>

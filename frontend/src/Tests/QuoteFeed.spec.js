@@ -45,6 +45,29 @@ const mockEmptyResponse = {
     content: [],
   },
 };
+const mockSuccessGetQuotesMiddleOfMultiPage = {
+  data: {
+    content: [
+      {
+        id: 5,
+        content: "This quote is in middle page",
+        date: 1561294668539,
+        user: {
+          id: 1,
+          username: "user1",
+          displayName: "display1",
+          image: "profile1.png",
+        },
+      },
+    ],
+    number: 0,
+    first: false,
+    last: false,
+    size: 5,
+    totalPages: 2,
+  },
+};
+
 const mockSuccessGetNewQuotesList = {
   data: [
     {
@@ -466,6 +489,94 @@ describe("QuoteFeed", () => {
       fireEvent.click(loadMore);
 
       expect(apiCalls.loadOldQuotes).toHaveBeenCalledTimes(1);
+    });
+    it("replaces Load More with spinner when there is an active api call about it", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadOldQuotes = jest.fn().mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve(mockSuccessGetQuotesLastOfMultiPage);
+          }, 300);
+        });
+      });
+      const { queryByText } = setup();
+      const loadMore = await waitForElement(() => queryByText("Load More"));
+      fireEvent.click(loadMore);
+      const spinner = await waitForElement(() => queryByText("Loading..."));
+      expect(spinner).toBeInTheDocument();
+      expect(queryByText("Load More")).not.toBeInTheDocument();
+    });
+    it("replaces Spinner with Load More after active api call for loadOldQuotes finishes with middle page response", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadOldQuotes = jest.fn().mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve(mockSuccessGetQuotesMiddleOfMultiPage);
+          }, 300);
+        });
+      });
+      const { queryByText } = setup();
+      const loadMore = await waitForElement(() => queryByText("Load More"));
+      fireEvent.click(loadMore);
+      await waitForElement(() => queryByText("This quote is in middle page"));
+      expect(queryByText("Loading...")).not.toBeInTheDocument();
+      expect(queryByText("Load More")).toBeInTheDocument();
+    });
+
+    it("does not allow loadNewQuotes to be called when there is an active api call about it", async () => {
+      useFakeIntervals();
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      apiCalls.loadNewQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetNewQuotesList);
+      const { queryByText } = setup();
+      await waitForDomChange();
+      runTimer();
+      const newQuoteCount = await waitForElement(() =>
+        queryByText("There is 1 new quote")
+      );
+      fireEvent.click(newQuoteCount);
+      fireEvent.click(newQuoteCount);
+
+      expect(apiCalls.loadNewQuotes).toHaveBeenCalledTimes(1);
+      useRealIntervals();
+    });
+    it("replaces There is 1 new quote with spinner when there is an active api call about it", async () => {
+      useFakeIntervals();
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      apiCalls.loadNewQuotes = jest.fn().mockImplementation(() => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve(mockSuccessGetNewQuotesList);
+          }, 300);
+        });
+      });
+      const { queryByText } = setup();
+      await waitForDomChange();
+      runTimer();
+
+      const newQuoteCount = await waitForElement(() =>
+        queryByText("There is 1 new quote")
+      );
+      fireEvent.click(newQuoteCount);
+      const spinner = await waitForElement(() => queryByText("Loading..."));
+      expect(spinner).toBeInTheDocument();
+      expect(queryByText("There is 1 new quote")).not.toBeInTheDocument();
+      useRealIntervals();
     });
   });
 });
