@@ -118,4 +118,8 @@ public class QuoteService {
 		return quoteRepository.countByIdGreaterThanAndUser(id, userService.getByUsername(username));
 	}
 */
+
+	public void deleteQuote(long id) {
+		quoteRepository.deleteById(id);
+	}
 } 

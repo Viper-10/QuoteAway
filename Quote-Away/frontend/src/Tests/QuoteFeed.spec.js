@@ -8,6 +8,18 @@ import {
 import QuoteFeed from "../components/QuoteFeed";
 import * as apiCalls from "../ApiRequests/apiCalls";
 import { MemoryRouter } from "react-router-dom";
+import authReducer from "../redux/authReducer";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+
+const loggedInStateUser = {
+  id: 1,
+  username: "user1",
+  displayName: "display1",
+  image: "profile1.png",
+  password: "P4ssword$",
+  isLoggedIn: true,
+};
 
 const originalSetInterval = window.setInterval;
 const originalClearInterval = window.clearInterval;
@@ -32,11 +44,14 @@ const runTimer = () => {
   timedFunction && timedFunction();
 };
 
-const setup = (props) => {
+const setup = (props, state = loggedInStateUser) => {
+  const store = createStore(authReducer, state);
   return render(
-    <MemoryRouter>
-      <QuoteFeed {...props} />
-    </MemoryRouter>
+    <Provider store={store}>
+      <MemoryRouter>
+        <QuoteFeed {...props} />
+      </MemoryRouter>
+    </Provider>
   );
 };
 
@@ -577,6 +592,112 @@ describe("QuoteFeed", () => {
       expect(spinner).toBeInTheDocument();
       expect(queryByText("There is 1 new quote")).not.toBeInTheDocument();
       useRealIntervals();
+    });
+    it("displays modal when clicking delete on quote", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      const { queryByTestId, container } = setup();
+      await waitForDomChange();
+
+      const deleteButton = container.querySelectorAll("button")[0];
+      fireEvent.click(deleteButton);
+      const modalRootDiv = queryByTestId("modal-root");
+      expect(modalRootDiv).toHaveClass("modal fade d-block show");
+    });
+    it("hides modal when clicking cancel", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      const { queryByTestId, container, queryByText } = setup();
+      await waitForDomChange();
+
+      const deleteButton = container.querySelectorAll("button")[0];
+      fireEvent.click(deleteButton);
+      fireEvent.click(queryByText("Cancel"));
+
+      const modalRootDiv = queryByTestId("modal-root");
+      expect(modalRootDiv).not.toHaveClass("d-block show");
+    });
+    it("displays modal with information about the action", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+      const { container, queryByText } = setup();
+      await waitForDomChange();
+
+      const deleteButton = container.querySelectorAll("button")[0];
+      fireEvent.click(deleteButton);
+
+      const message = queryByText(
+        `Are you sure to delete 'This is the latest quote'?`
+      );
+      expect(message).toBeInTheDocument();
+    });
+
+    it("calls deleteQuote api with hoax id when delete button is clicked on modal", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+
+      apiCalls.deleteQuote = jest.fn().mockResolvedValue({});
+      const { container, queryByText } = setup();
+      await waitForDomChange();
+      const deleteButton = container.querySelectorAll("button")[0];
+      fireEvent.click(deleteButton);
+      const deleteQuoteButton = queryByText("Delete Quote");
+      fireEvent.click(deleteQuoteButton);
+      expect(apiCalls.deleteQuote).toHaveBeenCalledWith(10);
+    });
+    it("hides modal after successful deleteQuote api call", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+
+      apiCalls.deleteQuote = jest.fn().mockResolvedValue({});
+      const { container, queryByText, queryByTestId } = setup();
+      await waitForDomChange();
+      const deleteButton = container.querySelectorAll("button")[0];
+      fireEvent.click(deleteButton);
+      const deleteQuoteButton = queryByText("Delete Quote");
+      fireEvent.click(deleteQuoteButton);
+      await waitForDomChange();
+      const modalRootDiv = queryByTestId("modal-root");
+      expect(modalRootDiv).not.toHaveClass("d-block show");
+    });
+    it("removes the deleted hoax from document after successful deleteQuote api call", async () => {
+      apiCalls.loadQuotes = jest
+        .fn()
+        .mockResolvedValue(mockSuccessGetQuotesFirstOfMultiPage);
+      apiCalls.loadNewQuoteCount = jest
+        .fn()
+        .mockResolvedValue({ data: { count: 1 } });
+
+      apiCalls.deleteQuote = jest.fn().mockResolvedValue({});
+      const { container, queryByText } = setup();
+      await waitForDomChange();
+      const deleteButton = container.querySelectorAll("button")[0];
+      fireEvent.click(deleteButton);
+      const deleteQuoteButton = queryByText("Delete Quote");
+      fireEvent.click(deleteQuoteButton);
+      await waitForDomChange();
+      const deletedQuoteContent = queryByText("This is the latest quote");
+      expect(deletedQuoteContent).not.toBeInTheDocument();
     });
   });
 });

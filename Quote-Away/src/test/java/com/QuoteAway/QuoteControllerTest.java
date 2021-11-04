@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -32,6 +33,7 @@ import com.QuoteAway.quote.FamousQuote;
 import com.QuoteAway.quote.QuoteRepository;
 import com.QuoteAway.quote.QuoteService;
 import com.QuoteAway.quote.vm.QuoteVM;
+import com.QuoteAway.shared.GenericResponse;
 import com.QuoteAway.users.User;
 import com.QuoteAway.users.UserRepository;
 import com.QuoteAway.users.UserService;
@@ -458,17 +460,78 @@ public class QuoteControllerTest {
 		ResponseEntity<Map<String, Long>> response = getNewQuoteCountOfUser(fourth.getId(), "user1", new ParameterizedTypeReference<Map<String, Long>>() {}); 
 		assertThat(response.getBody().get("count")).isEqualTo(1);
 	}	
+	
+	@Test
+	public void deleteQuote_whenUserIsUnAuthorized_receiveUnauthorized() {
+		ResponseEntity<Object> response = deleteQuote(555, Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+	}
+
+	@Test
+	public void deleteQuote_whenUserIsAuthorized_receiveOk() {
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		authenticate("user1");
+		FamousQuote quote = quoteService.save(user, TestUtil.createValidQuote());
+	
+		ResponseEntity<Object> response = deleteQuote(quote.getId(), Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	}
+
+	@Test
+	public void deleteQuote_whenUserIsAuthorized_quoteRemovedFromDatabase() {
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		authenticate("user1");
+		FamousQuote quote = quoteService.save(user, TestUtil.createValidQuote());
+		
+		deleteQuote(quote.getId(), Object.class);
+		Optional<FamousQuote> inDB = quoteRepository.findById(quote.getId());
+		assertThat(inDB.isPresent()).isFalse();
+	}
+
+	@Test
+	public void deleteQuote_whenQuoteIsOwnedByAnotherUser_receiveForbidden() {
+		userService.save(TestUtil.createValidUser("user1"));
+		authenticate("user1");
+		User quoteOwner = userService.save(TestUtil.createValidUser("quote-owner"));
+		
+		FamousQuote quote = quoteService.save(quoteOwner, TestUtil.createValidQuote());
+		
+		ResponseEntity<Object> response = deleteQuote(quote.getId(), Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+	}
+
+	@Test
+	public void deleteQuote_whenQuoteDoesNotExist_receiveForbidden() {
+		userService.save(TestUtil.createValidUser("user1"));
+		authenticate("user1");
+		
+		ResponseEntity<Object> response = deleteQuote(555, Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+	}
+
+	@Test
+	public void deleteQuote_whenUserIsAuthorized_receiveGenericResponse() {
+		User user = userService.save(TestUtil.createValidUser("user1"));
+		authenticate("user1");
+		FamousQuote quote = quoteService.save(user, TestUtil.createValidQuote());
+		
+		ResponseEntity<GenericResponse> response = deleteQuote(quote.getId(), GenericResponse.class);
+		assertThat(response.getBody().getMessage()).isNotNull();
+	}
 
 	public <T> ResponseEntity<T> getNewQuotes(long quoteId, ParameterizedTypeReference<T> responseType){
 		String path = API_1_0_QUOTES + "/" + quoteId + "?direction=after&page=0&size=5&sort=id,desc";
 		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);	
 	}
 	
-	public <T> ResponseEntity<T> getNewQuoteCount(long hoaxId, ParameterizedTypeReference<T> responseType){
-		String path = API_1_0_QUOTES + "/" + hoaxId +"?direction=after&count=true";
+	public <T> ResponseEntity<T> getNewQuoteCount(long quoteId, ParameterizedTypeReference<T> responseType){
+		String path = API_1_0_QUOTES + "/" + quoteId +"?direction=after&count=true";
 		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);
 	}
-
+	
+	public <T> ResponseEntity<T> deleteQuote(long quoteId, Class<T> responseType){
+		return testRestTemplate.exchange(API_1_0_QUOTES + "/" + quoteId, HttpMethod.DELETE, null, responseType);
+	}	
 	
 	public <T> ResponseEntity<T> getNewQuotesOfUser(long quoteId, String username, ParameterizedTypeReference<T> responseType){
 		String path = "/api/1.0/users/"+ username + "/quotes/" + quoteId + "?direction=after&page=0&size=5&sort=id,desc";

@@ -168,4 +168,13 @@ describe("apicalls", () => {
       );
     });
   });
+  describe("deleteQuote", () => {
+    it("calls /api/1.0/quotes/5 when quote id param provided as 5", () => {
+      const mockDelete = jest.fn();
+      axios.delete = mockDelete;
+      apiCalls.deleteQuote(5);
+      const path = mockDelete.mock.calls[0][0];
+      expect(path).toBe("/api/1.0/quotes/5");
+    });
+  });
 });

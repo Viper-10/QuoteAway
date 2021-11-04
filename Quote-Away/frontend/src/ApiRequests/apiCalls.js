@@ -73,3 +73,6 @@ export const loadNewQuoteCount = (quoteId, username) => {
   const path = `${basePath}/${quoteId}?direction=after&count=true`;
   return axios.get(path);
 };
+export const deleteQuote = (quoteId) => {
+  return axios.delete(`/api/1.0/quotes/${quoteId}`);
+};

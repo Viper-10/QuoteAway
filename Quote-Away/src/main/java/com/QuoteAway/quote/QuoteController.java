@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.QuoteAway.quote.vm.QuoteVM;
 import com.QuoteAway.shared.CurrentUser;
+import com.QuoteAway.shared.GenericResponse;
 import com.QuoteAway.users.User;
 
 @RestController
@@ -63,6 +66,13 @@ public class QuoteController {
 		List<QuoteVM> newQuotes = quoteService.getNewQuotes(id, username, pageable).stream().map(QuoteVM::new).collect(Collectors.toList());
 		
 		return ResponseEntity.ok(newQuotes);
+	}
+	
+	@DeleteMapping("/quotes/{id:[0-9]+}")
+	@PreAuthorize("@quoteSecurityService.isAllowedToDelete(#id, principal)")
+	GenericResponse deleteQuote(@PathVariable long id) {
+		quoteService.deleteQuote(id);
+		return new GenericResponse("Quote is removed");
 	}
 	
 //	@GetMapping("/users/{username}/quotes/{id:[0-9]+}")

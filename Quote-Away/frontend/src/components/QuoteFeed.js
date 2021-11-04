@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import * as apiCalls from "../ApiRequests/apiCalls";
 import Spinner from "./Spinner";
 import QuoteView from "./QuoteView";
+import Modal from "./Modal";
 
 class QuoteFeed extends Component {
   state = {
@@ -12,6 +13,7 @@ class QuoteFeed extends Component {
     newQuoteCount: 0,
     isLoadingOldQuotes: false,
     isLoadingNewQuotes: false,
+    isDeletingQuote: false,
   };
 
   componentDidMount() {
@@ -81,6 +83,29 @@ class QuoteFeed extends Component {
       });
   };
 
+  onClickDeleteQuote = (quote) => {
+    this.setState({ quoteToBeDeleted: quote });
+  };
+
+  onClickModalCancel = () => {
+    this.setState({ quoteToBeDeleted: undefined });
+  };
+
+  onClickModalOk = () => {
+    this.setState({ isDeletingQuote: true });
+    apiCalls.deleteQuote(this.state.quoteToBeDeleted.id).then((response) => {
+      const page = { ...this.state.page };
+      page.content = page.content.filter(
+        (quote) => quote.id !== this.state.quoteToBeDeleted.id
+      );
+      this.setState({
+        quoteToBeDeleted: undefined,
+        page,
+        isDeletingQuote: false,
+      });
+    });
+  };
+
   render() {
     if (this.state.isLoadingQuotes) {
       return <Spinner />;
@@ -112,7 +137,13 @@ class QuoteFeed extends Component {
           </div>
         )}
         {this.state.page.content.map((quote) => {
-          return <QuoteView key={quote.id} quote={quote} />;
+          return (
+            <QuoteView
+              key={quote.id}
+              quote={quote}
+              onClickDelete={() => this.onClickDeleteQuote(quote)}
+            />
+          );
         })}
         {this.state.page.last === false && (
           <div
@@ -125,6 +156,18 @@ class QuoteFeed extends Component {
             {this.state.isLoadingOldQuotes ? <Spinner /> : "Load More"}
           </div>
         )}
+        <Modal
+          visible={this.state.quoteToBeDeleted && true}
+          onClickCancel={this.onClickModalCancel}
+          body={
+            this.state.quoteToBeDeleted &&
+            `Are you sure to delete '${this.state.quoteToBeDeleted.content}'?`
+          }
+          title="Delete!"
+          okButton="Delete Quote"
+          onClickOk={this.onClickModalOk}
+          pendingApiCall={this.state.isDeletingQuote}
+        />
       </div>
     );
   }
