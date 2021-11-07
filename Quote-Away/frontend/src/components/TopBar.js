@@ -112,7 +112,7 @@ class TopBar extends React.Component {
       );
     }
     return (
-      <div className="bg-white shadow-sm mb-2">
+      <div className="shadow-sm mb-2">
         <div className="container">
           <nav className="navbar navbar-light navbar-expand">
             <Link to="/" className="navbar-brand">

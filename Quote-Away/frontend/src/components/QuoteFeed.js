@@ -124,7 +124,7 @@ class QuoteFeed extends Component {
         ? "There is 1 new quote"
         : `There are ${this.state.newQuoteCount} new quotes`;
     return (
-      <div>
+      <div class="mb-4">
         {this.state.newQuoteCount > 0 && (
           <div
             className="card card-header text-center"
@@ -147,7 +147,7 @@ class QuoteFeed extends Component {
         })}
         {this.state.page.last === false && (
           <div
-            className="card card-header text-center"
+            className="card card-header text-center bg-secondary"
             onClick={this.onClickLoadMore}
             style={{
               cursor: this.state.isLoadingOldQuotes ? "not-allowed" : "pointer",

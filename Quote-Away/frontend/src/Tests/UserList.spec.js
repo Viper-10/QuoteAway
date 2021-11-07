@@ -192,10 +192,8 @@ describe("UserList", () => {
         .mockRejectedValueOnce(mockFailGet);
 
       const { queryByText } = setup();
-      const previousLink = await waitForElement(() =>
-        queryByText("< previous")
-      );
-      fireEvent.click(previousLink);
+      const prevLink = await waitForElement(() => queryByText("< prev"));
+      fireEvent.click(prevLink);
 
       const errorMessage = await waitForElement(() =>
         queryByText("User load failed")

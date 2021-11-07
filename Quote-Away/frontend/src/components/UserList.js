@@ -54,7 +54,7 @@ class UserList extends React.Component {
                 style={{ cursor: "pointer" }}
                 onClick={this.onClickPrevious}
               >
-                {`< previous`}
+                {`< prev`}
               </span>
             )}
             {!this.state.page.last && (

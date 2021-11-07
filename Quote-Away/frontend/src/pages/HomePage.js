@@ -9,11 +9,11 @@ class HomePage extends React.Component {
     return (
       <div data-testid="homepage">
         <div className="row">
-          <div className="col-8">
+          <div className="col-6 flex-grow-1">
             {this.props.loggedInUser.isLoggedIn && <QuoteSubmit />}
             <QuoteFeed />
           </div>
-          <div className="col-4">
+          <div className="col">
             <UserList />
           </div>
         </div>
