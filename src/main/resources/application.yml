@@ -1,0 +1,62 @@
+spring : 
+  datasource : 
+    generate-unique-name : false
+  h2 : 
+      console : 
+              enabled : true
+              
+  jpa :
+   properties :
+     javax : 
+        persistence : 
+          validation : 
+            mode : none  
+# setting default page size is done in controller individually for more 
+# flexibility
+               
+  data :
+    web : 
+      pageable : 
+        default-page-size : 10 
+        max-page-size : 100
+        
+  profiles :
+      active : 
+          - dev 
+              
+# 3 dashes -> "---" defines a new profile     
+              
+--- 
+spring : 
+  datasource : 
+    url : jdbc:h2:./hoaxify-prod
+    #default username 
+    username : sa
+  jpa : 
+    hibernate : 
+      ddl-auto : update 
+      h2 : 
+     console : 
+          enabled : false
+          
+  # custom configuration for file appConfiguration in com/hoaxify/configuration folder.
+  hoaxify : 
+    upload-path : uploads-prod
+ 
+--- 
+spring : 
+  profiles : dev
+  datasource : 
+    url : jdbc:mysql://quoteawaydb.c3d8eiyybyiy.us-east-2.rds.amazonaws.com:3306/QuoteAway
+    username : Viper_10
+    password : Win32dll$  jpa:    hibernate:      ddl-auto: update
+   
+    
+hoaxify : 
+  upload-path : uploads-dev
+
+---
+spring : 
+  profiles : test
+hoaxify : 
+  upload-path : uploads-test
