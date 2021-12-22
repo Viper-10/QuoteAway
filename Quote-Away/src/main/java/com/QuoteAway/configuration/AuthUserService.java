@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 import com.QuoteAway.users.UserRepository;
 
 @Service
@@ -17,7 +17,7 @@ public class AuthUserService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
+		QuoteAwayUser user = userRepository.findByUsername(username);
 		
 		if(user == null) {
 			throw new UsernameNotFoundException("User " + username + " not registered"); 

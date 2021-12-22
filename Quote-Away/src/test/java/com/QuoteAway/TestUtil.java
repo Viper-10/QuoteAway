@@ -1,11 +1,11 @@
 package com.QuoteAway;
 
 import com.QuoteAway.quote.FamousQuote;
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 
 public class TestUtil {
-	public static User createValidUser() {
-		User user = new User(); 
+	public static QuoteAwayUser createValidUser() {
+		QuoteAwayUser user = new QuoteAwayUser(); 
 		user.setUsername("priyadharshan");
 		user.setDisplayName("KdPinkhi");
 		user.setPassword("P4ssword$");
@@ -13,8 +13,8 @@ public class TestUtil {
 		return user; 
 	}
 	
-	public static User createValidUser(String username) {
-		User user = createValidUser(); 
+	public static QuoteAwayUser createValidUser(String username) {
+		QuoteAwayUser user = createValidUser(); 
 		user.setUsername(username);
 		return user; 
 	}

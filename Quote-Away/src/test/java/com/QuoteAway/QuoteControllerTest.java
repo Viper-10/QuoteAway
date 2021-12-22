@@ -34,7 +34,7 @@ import com.QuoteAway.quote.QuoteRepository;
 import com.QuoteAway.quote.QuoteService;
 import com.QuoteAway.quote.vm.QuoteVM;
 import com.QuoteAway.shared.GenericResponse;
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 import com.QuoteAway.users.UserRepository;
 import com.QuoteAway.users.UserService;
 
@@ -183,14 +183,14 @@ public class QuoteControllerTest {
 	
 	@Test
 	public void postQuote_whenquoteIsValidAndUserIsAuthorized_quoteCanBeAccessedFromUserEntity() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
 		FamousQuote quote = TestUtil.createValidQuote();
 		postQuote(quote, Object.class);
 		
 		EntityManager entityManager = entityManagerFactory.createEntityManager(); 
 		
-		User inDBUser = entityManager.find(User.class, user.getId());
+		QuoteAwayUser inDBUser = entityManager.find(QuoteAwayUser.class, user.getId());
 		assertThat(inDBUser.getQuotes().size()).isEqualTo(1);
 		
 	}
@@ -210,7 +210,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getQuotes_whenThereAreQuotes_receivePageWithtems() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -222,7 +222,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getQuotes_whenThereAreQuotes_receivePageWithQuoteVM() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		
 		ResponseEntity<TestPage<QuoteVM>> response = getQuotes(new ParameterizedTypeReference<TestPage<QuoteVM>>() {});
@@ -265,7 +265,7 @@ public class QuoteControllerTest {
 	
 	@Test
 	public void getQuotesOfUser_whenUserExistsWithQuotes_receivePageWithQuoteVM() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		
 		ResponseEntity<TestPage<QuoteVM>> response = getQuotesOfUser("user1", new ParameterizedTypeReference<TestPage<QuoteVM>>() {});
@@ -275,7 +275,7 @@ public class QuoteControllerTest {
 	
 	@Test
 	public void getQuotesOfUser_whenUserExistsWithMultipleQuotes_receivePageWithMatchingQuotesCount() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -286,13 +286,13 @@ public class QuoteControllerTest {
 	
 	@Test
 	public void getQuotesOfUser_whenMultipleUsersExistWithMultipleQuotes_receivePageWithMatchingQuotesCount() {
-		User user1 = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user1 = userService.save(TestUtil.createValidUser("user1"));
 		
 		IntStream.rangeClosed(1, 3).forEach(i ->{
 			quoteService.save(user1, TestUtil.createValidQuote());
 		});
 		
-		User user2 = userService.save(TestUtil.createValidUser("user2"));
+		QuoteAwayUser user2 = userService.save(TestUtil.createValidUser("user2"));
 		
 		IntStream.rangeClosed(1, 5).forEach(i ->{
 			quoteService.save(user2, TestUtil.createValidQuote());
@@ -312,7 +312,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getOldQuotes_whenThereAreNoQuotes_receivePageWithItemsProvidedId() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -340,7 +340,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getOldQuotesOfUser_whenUserExistAndThereAreQuotes_receivePageWithItemsBeforeProvidedId() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -355,7 +355,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getOldQuotesOfUser_whenUserExistAndThereAreNoQuotes_receivePageWithZeroItemsBeforeProvidedId() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -372,7 +372,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getNewQuotes_whenThereAreQuotes_receiveListOfItemsAfterProvidedId() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -394,7 +394,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getNewQuotesOfUser_whenUserExistAndThereAreQuotes_receivePageWithItemsAfterProvidedId() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -415,7 +415,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getNewQuotesOfUser_whenUserExistAndThereAreNoQuotes_receivePageWithZeroItemsBeforeProvidedId() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -432,7 +432,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getNewQuoteCount_whenThereAreQuotes_receiveCountAfterProvidedId() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -447,7 +447,7 @@ public class QuoteControllerTest {
 	@Test
 	public void getNewQuoteCountOfUser_whenThereAreQuotes_receiveCountAfterProvidedId() {
 		
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
 		quoteService.save(user, TestUtil.createValidQuote());
@@ -469,7 +469,7 @@ public class QuoteControllerTest {
 
 	@Test
 	public void deleteQuote_whenUserIsAuthorized_receiveOk() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
 		FamousQuote quote = quoteService.save(user, TestUtil.createValidQuote());
 	
@@ -479,7 +479,7 @@ public class QuoteControllerTest {
 
 	@Test
 	public void deleteQuote_whenUserIsAuthorized_quoteRemovedFromDatabase() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
 		FamousQuote quote = quoteService.save(user, TestUtil.createValidQuote());
 		
@@ -492,7 +492,7 @@ public class QuoteControllerTest {
 	public void deleteQuote_whenQuoteIsOwnedByAnotherUser_receiveForbidden() {
 		userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
-		User quoteOwner = userService.save(TestUtil.createValidUser("quote-owner"));
+		QuoteAwayUser quoteOwner = userService.save(TestUtil.createValidUser("quote-owner"));
 		
 		FamousQuote quote = quoteService.save(quoteOwner, TestUtil.createValidQuote());
 		
@@ -511,7 +511,7 @@ public class QuoteControllerTest {
 
 	@Test
 	public void deleteQuote_whenUserIsAuthorized_receiveGenericResponse() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate("user1");
 		FamousQuote quote = quoteService.save(user, TestUtil.createValidQuote());
 		

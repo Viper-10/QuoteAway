@@ -14,7 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.QuoteAway.quote.vm.QuoteVM;
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 import com.QuoteAway.users.UserService;
 
 @Service
@@ -30,7 +30,7 @@ public class QuoteService {
 		this.userService = userService;
 	}
 	
-	public FamousQuote save(User user, FamousQuote quote) {
+	public FamousQuote save(QuoteAwayUser user, FamousQuote quote) {
 		quote.setTimestamp(new Date());
 		quote.setUser(user);
 		return quoteRepository.save(quote);
@@ -41,14 +41,14 @@ public class QuoteService {
 	}
 
 	public Page<FamousQuote> getQuotesOfUser(String username, Pageable pageable) {
-		User inDB = userService.getByUsername(username); 
+		QuoteAwayUser inDB = userService.getByUsername(username); 
 		return quoteRepository.findByUser(inDB, pageable);
 	}
 
 	public Page<FamousQuote> getOldQuotes(long id, String username, Pageable pageable) {
 		Specification<FamousQuote> spec = Specification.where(idLessThan(id));
 		if(username != null) {
-			User inDB = userService.getByUsername(username);
+			QuoteAwayUser inDB = userService.getByUsername(username);
 			spec = spec.and(userIs(inDB));
 //		return quoteRepository.findByIdLessThanAndUser(id, inDB, pageable);
 		}	
@@ -64,7 +64,7 @@ public class QuoteService {
 		Specification<FamousQuote> spec = Specification.where(idGreaterThan(id));
 		
 		if(username != null) {			
-			User inDB = userService.getByUsername(username);
+			QuoteAwayUser inDB = userService.getByUsername(username);
 			spec = spec.and(userIs(inDB));
 //			return quoteRepository.findByIdGreaterThanAndUser(id, inDB, pageable.getSort());
 		}
@@ -79,7 +79,7 @@ public class QuoteService {
 		Specification<FamousQuote> spec = Specification.where(idGreaterThan(id));
 		
 		if(username != null) {
-			User inDB = userService.getByUsername(username);
+			QuoteAwayUser inDB = userService.getByUsername(username);
 			spec = spec.and(userIs(inDB));
 //			return quoteRepository.countByIdGreaterThanAndUser(id, inDB);	
 		}
@@ -87,7 +87,7 @@ public class QuoteService {
 //		return quoteRepository.countByIdGreaterThan(id);
 	}
 	
-	private Specification<FamousQuote> userIs(User user){
+	private Specification<FamousQuote> userIs(QuoteAwayUser user){
 		return (root, query, criteriaBuilder) -> {
 				return criteriaBuilder.equal(root.get("user"), user);
 		};

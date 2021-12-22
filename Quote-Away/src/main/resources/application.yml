@@ -47,7 +47,11 @@ spring :
 spring : 
   profiles : dev
   datasource : 
-    url : jdbc:h2:mem:hoaxify-dev
+    url : jdbc:mysql://quoteawaydb.c3d8eiyybyiy.us-east-2.rds.amazonaws.com:3306/QuoteAway
+    username : Viper_10
+    password : Win32dll$  jpa:    hibernate:      ddl-auto: update
+   
+    
 hoaxify : 
   upload-path : uploads-dev
 

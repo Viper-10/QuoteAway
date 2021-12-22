@@ -20,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.QuoteAway.error.ApiError;
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 import com.QuoteAway.users.UserRepository;
 import com.QuoteAway.users.UserService;
 
@@ -101,7 +101,7 @@ public class LoginControllerTest {
 	
 	@Test
 	public void postLogin_withValidCredentials_receiveOk() {
-		User user = TestUtil.createValidUser();
+		QuoteAwayUser user = TestUtil.createValidUser();
 		
 		userService.save(user); 
 		authenticate(); 
@@ -112,9 +112,9 @@ public class LoginControllerTest {
 	
 	@Test
 	public void postLogin_withValidCredentials_receiveLoggedInUser() {
-		User user = TestUtil.createValidUser();
+		QuoteAwayUser user = TestUtil.createValidUser();
 		
-		User inDB = userService.save(user); 
+		QuoteAwayUser inDB = userService.save(user); 
 		authenticate(); 
 		
 		ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>(){});
@@ -129,9 +129,9 @@ public class LoginControllerTest {
 	
 	@Test
 	public void postLogin_withValidCredentials_receiveLoggedInUserImage() {
-		User user = TestUtil.createValidUser();
+		QuoteAwayUser user = TestUtil.createValidUser();
 		
-		User inDB = userService.save(user); 
+		QuoteAwayUser inDB = userService.save(user); 
 		authenticate(); 
 		
 		ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>(){});
@@ -144,9 +144,9 @@ public class LoginControllerTest {
 	}
 	@Test
 	public void postLogin_withValidCredentials_receiveLoggedInUserDisplayName() {
-		User user = TestUtil.createValidUser();
+		QuoteAwayUser user = TestUtil.createValidUser();
 		
-		User inDB = userService.save(user); 
+		QuoteAwayUser inDB = userService.save(user); 
 		authenticate(); 
 		
 		ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>(){});

@@ -31,7 +31,7 @@ public class UserService {
 		this.fileService = fileService; 
 	}
 	
-	public User save(User user) throws DuplicateUsernameException{
+	public QuoteAwayUser save(QuoteAwayUser user) throws DuplicateUsernameException{
 //		if(userRepository.findByUserName(user.getUserName()) != null) {
 //			throw new DuplicateUsernameException(); 
 //		}
@@ -40,7 +40,7 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public Page<User> getUsers(User loggedInUser, Pageable pageable) {
+	public Page<QuoteAwayUser> getUsers(QuoteAwayUser loggedInUser, Pageable pageable) {
 		if(loggedInUser != null) {
 			return userRepository.findByUsernameNot(loggedInUser.getUsername(), pageable);
 		}
@@ -48,20 +48,20 @@ public class UserService {
 		return userRepository.findAll(pageable); 
 	}
 
-	public User getByUsername(String username) {
+	public QuoteAwayUser getByUsername(String username) {
 		
-		User user = userRepository.findByUsername(username);
+		QuoteAwayUser user = userRepository.findByUsername(username);
 		if(user == null) {
 			throw new NotFoundException(username + " not found");
 		}		
 		return user; 
 	}
 
-	public User update(long id, UserUpdateVM userUpdate) {
+	public QuoteAwayUser update(long id, UserUpdateVM userUpdate) {
 		// we know the user exists for sure, since the user is logged in.  
 		// so we don't do findById or user name
 		
-		User inDB = userRepository.getOne(id); 
+		QuoteAwayUser inDB = userRepository.getOne(id); 
 		inDB.setDisplayName(userUpdate.getDisplayName());
 		
 		String savedImageName;

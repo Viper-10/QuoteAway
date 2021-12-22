@@ -8,12 +8,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
  
 public interface QuoteRepository extends JpaRepository<FamousQuote, Long>, JpaSpecificationExecutor<FamousQuote>{
 	
 	// for Userpage
-	Page<FamousQuote> findByUser(User user, Pageable pageable);
+	Page<FamousQuote> findByUser(QuoteAwayUser user, Pageable pageable);
 	
 	
 	// using spec instead of these repository methods.

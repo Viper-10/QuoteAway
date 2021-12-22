@@ -4,6 +4,7 @@ import java.beans.Transient;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -35,7 +37,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 //@Table(uniqueConstraints = @UniqueConstraint(columnNames = "username"))
-public class User implements UserDetails{
+@Table(name = "quote_away_user")
+public class QuoteAwayUser implements UserDetails{
 		
 	@Id
 	@SequenceGenerator(
@@ -58,12 +61,14 @@ public class User implements UserDetails{
 	@NotBlank(message = "{hoaxify.user.contraints.username.NotBlank.message}")
 	@Size(min = 4, max = 255)
 	@UniqueUsername
+	@Column(name = "quoteawayuser_username")
 	private String username;
 	
 	@NotNull(message = "{hoaxify.user.constraints.displayname.NotNull.message}")
 	@NotEmpty(message = "{hoaxify.user.contraints.displayname.NotEmpty.message}")
 	@NotBlank(message = "{hoaxify.user.contraints.displayname.NotBlank.message}")
 	@Size(min = 4, max = 255)
+	@Column(name = "quoteawayuser_displayname")
 	private String displayName;
 	
 	@NotNull(message = "{hoaxify.user.constraints.password.NotNull.message}")
@@ -71,12 +76,20 @@ public class User implements UserDetails{
 	@NotBlank(message = "{hoaxify.user.contraints.password.NotBlank.message}")
 	@Size(min = 8, max = 255)
 	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message = "{hoaxify.user.contraints.password.NotMatchingPattern.message}")
+	@Column(name = "quoteawayuser_password")
 	private String password;
 	
+	@Column(name = "quoteawayuser_image")
 	private String image;
 
 	@OneToMany(mappedBy = "user")
 	private List<FamousQuote> quotes;
+	
+	@Override 
+	public String getUsername() {
+		return username;
+		
+	}
 	
 	@Override
 	@Transient

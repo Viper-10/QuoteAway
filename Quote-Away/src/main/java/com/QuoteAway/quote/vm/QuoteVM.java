@@ -3,7 +3,7 @@ package com.QuoteAway.quote.vm;
 import java.util.Date;
 
 import com.QuoteAway.quote.FamousQuote;
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 import com.QuoteAway.users.vm.UserVM;
 
 import lombok.AllArgsConstructor;

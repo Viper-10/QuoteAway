@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.QuoteAway.configuration.AppConfiguration;
 import com.QuoteAway.error.ApiError;
 import com.QuoteAway.shared.GenericResponse;
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 import com.QuoteAway.users.UserRepository;
 import com.QuoteAway.users.UserService;
 import com.QuoteAway.users.vm.UserUpdateVM;
@@ -65,7 +65,7 @@ public class UserControllerTest {
 	}
 	
 	private ResponseEntity<Object> postSignUp(){
-		User user = createValidUser(); 
+		QuoteAwayUser user = createValidUser(); 
 		ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
 		return response; 
 	}
@@ -118,8 +118,8 @@ public class UserControllerTest {
 	
 	@Test 
 	public void postUser_WhenAnotherUser_AlreadyExistsOfSameUsername() {
-		User user1 = createValidUser(); 
-		User user2 = createValidUser(); 
+		QuoteAwayUser user1 = createValidUser(); 
+		QuoteAwayUser user2 = createValidUser(); 
 		
 		testRestTemplate.postForEntity(API_1_0_USERS, user1, Object.class); 
 		assertThat(testRestTemplate.postForEntity(API_1_0_USERS, user2, Object.class).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);  
@@ -128,11 +128,11 @@ public class UserControllerTest {
 	@Test
 	public void postUser_WhenUserIs_passwordIsHashedInDatabase() {
 		
-		User user = createValidUser(); 
+		QuoteAwayUser user = createValidUser(); 
 		testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
 		
-		List<User> users = userRepository.findAll();
-		User userInDB = users.get(0);
+		List<QuoteAwayUser> users = userRepository.findAll();
+		QuoteAwayUser userInDB = users.get(0);
 		
 		if(userInDB != null) {
 			assertThat(userInDB.getPassword()).isNotEqualTo(user.getPassword());
@@ -145,7 +145,7 @@ public class UserControllerTest {
 	@Test
 	public void postUser_WhenUserIsValid_receiveSuccessMessage() {
 		
-		User user = createValidUser();
+		QuoteAwayUser user = createValidUser();
 		
 		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
 		
@@ -155,7 +155,7 @@ public class UserControllerTest {
 	@Test
 	public void postUser_whereUserHasNullDisplayName_receiveBadRequest() {
 		
-		User user = createValidUser();
+		QuoteAwayUser user = createValidUser();
 		user.setDisplayName(null);
 		
 		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
@@ -166,7 +166,7 @@ public class UserControllerTest {
 	@Test
 	public void postUser_whereUserHasNullUsername_receiveBadRequest() {
 		
-		User user = createValidUser();
+		QuoteAwayUser user = createValidUser();
 		user.setUsername(null);
 		
 		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
@@ -176,7 +176,7 @@ public class UserControllerTest {
 	@Test
 	public void postUser_whereUserHasNullPassword_receiveBadRequest() {
 		
-		User user = createValidUser();
+		QuoteAwayUser user = createValidUser();
 		user.setPassword(null);
 		
 		ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
@@ -319,7 +319,7 @@ public class UserControllerTest {
 	
 	@Test 
 	public void putUser_whenAuthorizedUserSendsUpdateForAnotherUser_receiveForbidden() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate(user.getUsername());
 		
 		// random user id 
@@ -331,7 +331,7 @@ public class UserControllerTest {
 	
 	@Test 
 	public void putUser_whenValidRequestBodyFromAuthorizedUser_receiveOK() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate(user.getUsername());
 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
@@ -343,7 +343,7 @@ public class UserControllerTest {
 	
 	@Test 
 	public void putUser_whenValidRequestBodyFromAuthorizedUser_checkDisplayNameUpdated() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate(user.getUsername());
 		
 		UserUpdateVM updatedUser = new UserUpdateVM(); 
@@ -353,12 +353,12 @@ public class UserControllerTest {
 		
 		putUser(user.getId(), requestEntity, Object.class);
 		
-		User userInDB = userRepository.findByUsername("user1"); 
+		QuoteAwayUser userInDB = userRepository.findByUsername("user1"); 
 		assertThat(userInDB.getDisplayName()).isEqualTo(updatedUser.getDisplayName()); 
 	}
 	@Test 
 	public void putUser_whenValidRequestBodyFromAuthorized_receiveUserVMwithUpdatedDisplayName() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate(user.getUsername());
 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
@@ -371,7 +371,7 @@ public class UserControllerTest {
 	
 	@Test 
 	public void putUser_whenAuthorizedUserSendsUpdateForAnotherUser_receiveApiError() {
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate(user.getUsername());
 		
 		// random user id 
@@ -390,7 +390,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void putUser_withValidRequestBodyWithSupportedImageFromAuthorizedUser_receiveUserVMWithRandomImageName() throws IOException {
-		User user = userService.save(TestUtil.createValidUser("user1")); 
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1")); 
 		authenticate(user.getUsername()); 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
 		
@@ -407,7 +407,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void putUser_withValidRequestBodyWithSupportedImageFromAuthorizedUser_imageIsStoredUnderProfileFolder() throws IOException {
-		User user = userService.save(TestUtil.createValidUser("user1")); 
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1")); 
 		authenticate(user.getUsername()); 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
 		
@@ -427,7 +427,7 @@ public class UserControllerTest {
 	
 	@Test 
 	public void putUser_withInavlidRequestBodyWithNullDisplayNameFromAuthorizedUser_receiveBadrequest() throws IOException{
-		User user = userService.save(TestUtil.createValidUser("user1"));
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1"));
 		authenticate(user.getUsername());
 		
 		UserUpdateVM updatedUser = new UserUpdateVM(); 
@@ -440,7 +440,7 @@ public class UserControllerTest {
 		
 	@Test
 	public void putUser_withValidRequestBodyWithJPGImageFromAuthorizedUser_imageIsStoredUnderProfileFolder() throws IOException {
-		User user = userService.save(TestUtil.createValidUser("user1")); 
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1")); 
 		authenticate(user.getUsername()); 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
 		
@@ -456,7 +456,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void putUser_withValidRequestBodyWithGIFImageFromAuthorizedUser_receiveBadRequest() throws IOException {
-		User user = userService.save(TestUtil.createValidUser("user1")); 
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1")); 
 		authenticate(user.getUsername()); 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
 		
@@ -472,7 +472,7 @@ public class UserControllerTest {
 
 	@Test
 	public void putUser_withValidRequestBodyWithTXTImageFromAuthorizedUser_receiveValidationErrorForProfileImage() throws IOException {
-		User user = userService.save(TestUtil.createValidUser("user1")); 
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1")); 
 		authenticate(user.getUsername()); 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
 		
@@ -489,7 +489,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void putUser_withValidRequestBodyWithJPGImageForUserWhoHasImage_removeOldImageFromStorage() throws IOException {
-		User user = userService.save(TestUtil.createValidUser("user1")); 
+		QuoteAwayUser user = userService.save(TestUtil.createValidUser("user1")); 
 		authenticate(user.getUsername()); 		
 		UserUpdateVM updatedUser = createValidUserUpdateVM(); 
 		

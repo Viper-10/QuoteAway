@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.QuoteAway.quote.vm.QuoteVM;
 import com.QuoteAway.shared.CurrentUser;
 import com.QuoteAway.shared.GenericResponse;
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 
 @RestController
 @RequestMapping("/api/1.0")
@@ -33,7 +33,7 @@ public class QuoteController {
 	QuoteService quoteService;
 
 	@PostMapping("/quotes")
-	QuoteVM createQuote(@Valid @RequestBody FamousQuote quote, @CurrentUser User user) {
+	QuoteVM createQuote(@Valid @RequestBody FamousQuote quote, @CurrentUser QuoteAwayUser user) {
 		return new QuoteVM(quoteService.save(user, quote));
 	}
 	

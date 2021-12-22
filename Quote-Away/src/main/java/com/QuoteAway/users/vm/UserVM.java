@@ -1,6 +1,6 @@
 package com.QuoteAway.users.vm;
 
-import com.QuoteAway.users.User;
+import com.QuoteAway.users.QuoteAwayUser;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ public class UserVM {
 	private String displayName; 
 	private String image; 
 	
-	public UserVM(User user) {
+	public UserVM(QuoteAwayUser user) {
 		this.setId(user.getId()); 
 		this.setDisplayName(user.getDisplayName()); 
 		this.setUsername(user.getUsername());

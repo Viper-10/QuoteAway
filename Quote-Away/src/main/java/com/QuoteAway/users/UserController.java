@@ -58,7 +58,7 @@ public class UserController {
 //	}
 
 	@PostMapping
-	public GenericResponse handleSignUp(@Valid @RequestBody User user) {
+	public GenericResponse handleSignUp(@Valid @RequestBody QuoteAwayUser user) {
 		
 		userService.save(user);
 		return new GenericResponse("User saved");
@@ -68,13 +68,13 @@ public class UserController {
 	// this is controller way of customizing the page size. 
 	
 	@GetMapping
-	public Page<UserVM> handleGetUsers(@PageableDefault(size = 10)Pageable pageable, @CurrentUser User loggedInUser) {
+	public Page<UserVM> handleGetUsers(@PageableDefault(size = 10)Pageable pageable, @CurrentUser QuoteAwayUser loggedInUser) {
 		return userService.getUsers(loggedInUser, pageable).map((user) -> new UserVM(user));
 	}
 
 	@GetMapping(path = "{username}")
 	public UserVM handleGetUser(@PathVariable String username) {
-		User user = userService.getByUsername(username);
+		QuoteAwayUser user = userService.getByUsername(username);
 		return new UserVM(user);
 	}
 	
@@ -83,7 +83,7 @@ public class UserController {
 	// because he can only edit his profile
 	@PreAuthorize("#id == principal.id")
 	UserVM updateUser(@PathVariable long id, @RequestBody(required = false)  @Valid UserUpdateVM userUpdate) {
-		User updatedUser = userService.update(id, userUpdate); 
+		QuoteAwayUser updatedUser = userService.update(id, userUpdate); 
 		return new UserVM(updatedUser); 
 	}
 	

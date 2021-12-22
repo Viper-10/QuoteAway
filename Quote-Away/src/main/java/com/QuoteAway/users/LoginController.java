@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class LoginController {
 	
 	@PostMapping("/api/1.0/login")
-	public UserVM handleLogin(@CurrentUser User loggedInUser) {
+	public UserVM handleLogin(@CurrentUser QuoteAwayUser loggedInUser) {
 		return new UserVM(loggedInUser);
 	}
 	
