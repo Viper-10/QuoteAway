@@ -21,24 +21,23 @@ public class QuoteAwayApplication {
 		SpringApplication.run(QuoteAwayApplication.class, args);
 	}
 	
-	@Bean	
+//	@Bean
 	// This is for profile dev, so we don't need to worry about this interfering with tests as they're 
 	// marked as profile test for which this wont' run
 	
-	@Profile("dev")
-	CommandLineRunner run(UserService userService, QuoteService quoteService) {
-		return (args) -> {
-				IntStream.rangeClosed(1, 2)
-						.mapToObj(i -> {
-				
-					QuoteAwayUser user = QuoteAwayUser.builder().username("user" + i).displayName("display" + i).password("P4ssword$").build();
-									
-					return user; 
-					
-				}).forEach(userService::save);
-						
-		};
-	}
-	
+//	@Profile("dev")
+//	CommandLineRunner run(UserService userService, QuoteService quoteService) {
+//		return (args) -> {
+//				IntStream.rangeClosed(1, 2)
+//						.mapToObj(i -> {
+//
+//					QuoteAwayUser user = QuoteAwayUser.builder().username("user" + i).displayName("display" + i).password("P4ssword$").build();
+//
+//					return user;
+//
+//				}).forEach(userService::save);
+//
+//		};
+//	}
 }
 	

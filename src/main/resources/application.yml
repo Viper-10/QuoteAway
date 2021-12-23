@@ -35,7 +35,8 @@ spring :
   jpa : 
     hibernate : 
       ddl-auto : update 
-      h2 : 
+    
+  h2 : 
      console : 
           enabled : false
           
@@ -49,7 +50,12 @@ spring :
   datasource : 
     url : jdbc:mysql://quoteawaydb.c3d8eiyybyiy.us-east-2.rds.amazonaws.com:3306/QuoteAway
     username : Viper_10
-    password : Win32dll$  jpa:    hibernate:      ddl-auto: update
+#    url : jdbc:mysql://localhost:3306/quoteawaydb
+#    username : root
+    password : Win32dll$
+  jpa:
+    hibernate:
+      ddl-auto: update
    
     
 hoaxify : 
