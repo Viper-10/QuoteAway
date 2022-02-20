@@ -3,6 +3,7 @@ import ButtonWithProgress from "../components/ButtonWithProgress";
 import Input from "../components/Input";
 import { connect } from "react-redux";
 import * as authActions from "../Redux/authActions";
+import "../App.css";
 export class LoginPage extends React.Component {
   state = {
     username: "",
@@ -52,36 +53,38 @@ export class LoginPage extends React.Component {
     }
     return (
       <div className="container">
-        <h1 className="text-center">Login</h1>
-        <div className="col-12 mb-3">
-          <Input
-            label="Username"
-            placeholder="Your username"
-            onChange={this.onChangeUserName}
-          />
-        </div>
-        <div className="col-12 mb-3">
-          <Input
-            label="Password"
-            placeholder="Your password"
-            type="password"
-            onChange={this.onChangePassword}
-          />
-        </div>
-        {this.state.apiError !== undefined && (
+        <div className="login-signup-container">
+          <h1 className="text-center">Login</h1>
           <div className="col-12 mb-3">
-            <div className="alert alert-danger" role="alert">
-              {this.state.apiError}
-            </div>
+            <Input
+              label="Username :"
+              placeholder="Your username"
+              onChange={this.onChangeUserName}
+            />
           </div>
-        )}
-        <div className="text-center">
-          <ButtonWithProgress
-            onClick={this.onClickLogin}
-            disabled={disableLogin || this.state.pendingApiCall}
-            text="Login"
-            pendingApiCall={this.state.pendingApiCall}
-          />
+          <div className="col-12 mb-3">
+            <Input
+              label="Password :"
+              placeholder="Your password"
+              type="password"
+              onChange={this.onChangePassword}
+            />
+          </div>
+          {this.state.apiError !== undefined && (
+            <div className="col-12 mb-3">
+              <div className="alert alert-danger" role="alert">
+                {this.state.apiError}
+              </div>
+            </div>
+          )}
+          <div className="text-center">
+            <ButtonWithProgress
+              onClick={this.onClickLogin}
+              disabled={disableLogin || this.state.pendingApiCall}
+              text="Login"
+              pendingApiCall={this.state.pendingApiCall}
+            />
+          </div>
         </div>
       </div>
     );

@@ -147,7 +147,7 @@ class UserPage extends React.Component {
       pageContent = (
         <div className="alert alert-danger text-center">
           <div className="alert-heading">
-            <i className="fas fa-exclamation-triangle fa-3x" />
+            <i className="fas fa-exclamation-triangle fa-3x pb-2" />
           </div>
           <h5>User not found</h5>
         </div>
@@ -177,9 +177,11 @@ class UserPage extends React.Component {
       <div data-testid="userpage">
         <div className="row">
           <div className="col">{pageContent}</div>
-          <div className="col">
-            <QuoteFeed user={this.props.match.params.username} />
-          </div>
+          {this.state.userNotFound === false && (
+            <div className="col">
+              <QuoteFeed user={this.props.match.params.username} />
+            </div>
+          )}
         </div>
       </div>
     );

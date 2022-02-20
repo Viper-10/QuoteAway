@@ -16,9 +16,11 @@ import TopBar from "../components/TopBar";
 
 function App() {
   return (
-    <div>
-      <TopBar />
-      <div className="container">
+    <div className="main-page-colour">
+      <div className=" topbar-colour">
+        <TopBar />
+      </div>
+      <div className="container ">
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/login" component={LoginPage} />

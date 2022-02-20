@@ -11,6 +11,11 @@ class HomePage extends React.Component {
         <div className="row">
           <div className="col-6 flex-grow-1">
             {this.props.loggedInUser.isLoggedIn && <QuoteSubmit />}
+            {this.props.loggedInUser.isLoggedIn === false && (
+              <p className="pop-up-message">
+                Hey! You need to login to post quotes
+              </p>
+            )}
             <QuoteFeed />
           </div>
           <div className="col">

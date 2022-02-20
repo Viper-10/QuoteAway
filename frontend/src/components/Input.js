@@ -21,7 +21,7 @@ const Input = ({
 
   return (
     <div>
-      {label && <label> {label} </label>}
+      {label && <label className="pb-1"> {label} </label>}
       <input
         className={inputClassName}
         type={type || "text"}

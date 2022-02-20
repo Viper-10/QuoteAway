@@ -107,71 +107,73 @@ export class UserSignUpPage extends React.Component {
   render() {
     return (
       <div className="container">
-        <h3 className="text-center">Sign Up</h3>
-        <div className="col-12 mb-3 ">
-          {/* <label>Displayname</label>
+        <div className="login-signup-container">
+          <h3 className="text-center">Sign Up</h3>
+          <div className="col-12 mb-3 ">
+            {/* <label>Displayname</label>
           <input
-            className="form-control is-invalid"
-            type="text"
-            placeholder="Your display name"
-            value={this.state.displayName}
-            onChange={this.onChangeDisplayName}
+          className="form-control is-invalid"
+          type="text"
+          placeholder="Your display name"
+          value={this.state.displayName}
+          onChange={this.onChangeDisplayName}
           ></input>
           <div className="invalid-feedback">
-            {this.state.errors.displayName}
-          </div> */}
-          <Input
-            label="Displayname"
-            placeholder="Your display name"
-            value={this.state.displayName}
-            onChange={this.onChangeDisplayName}
-            hasError={this.state.errors.displayName && true}
-            errorMessage={this.state.errors.displayName}
-          />
-        </div>
-        <div className="col-12 mb-3">
-          <Input
-            label="Username"
-            value={this.state.username}
-            onChange={this.onChangeUserName}
-            placeholder="Your username"
-            hasError={this.state.errors.username && true}
-            errorMessage={this.state.errors.username}
-          />
-        </div>
-        <div className="col-12 mb-3">
-          <Input
-            label="Password"
-            type="password"
-            placeholder="Your password"
-            value={this.password}
-            onChange={this.onChangePassword}
-            hasError={this.state.errors.password && true}
-            errorMessage={this.state.errors.password}
-          />
-        </div>
-        <div className="col-12 mb-3">
-          <Input
-            label="Confirm Password"
-            type="password"
-            placeholder="Confirm your password"
-            value={this.confirmPassword}
-            onChange={this.onChangeConfirmPassword}
-            hasError={this.state.errors.confirmPassword && true}
-            errorMessage={this.state.errors.confirmPassword}
-          />
-        </div>
+          {this.state.errors.displayName}
+        </div> */}
+            <Input
+              label="Displayname"
+              placeholder="Your display name"
+              value={this.state.displayName}
+              onChange={this.onChangeDisplayName}
+              hasError={this.state.errors.displayName && true}
+              errorMessage={this.state.errors.displayName}
+            />
+          </div>
+          <div className="col-12 mb-3">
+            <Input
+              label="Username"
+              value={this.state.username}
+              onChange={this.onChangeUserName}
+              placeholder="Your username"
+              hasError={this.state.errors.username && true}
+              errorMessage={this.state.errors.username}
+            />
+          </div>
+          <div className="col-12 mb-3">
+            <Input
+              label="Password"
+              type="password"
+              placeholder="Your password"
+              value={this.password}
+              onChange={this.onChangePassword}
+              hasError={this.state.errors.password && true}
+              errorMessage={this.state.errors.password}
+            />
+          </div>
+          <div className="col-12 mb-3">
+            <Input
+              label="Confirm Password"
+              type="password"
+              placeholder="Confirm your password"
+              value={this.confirmPassword}
+              onChange={this.onChangeConfirmPassword}
+              hasError={this.state.errors.confirmPassword && true}
+              errorMessage={this.state.errors.confirmPassword}
+            />
+          </div>
 
-        <div className="text-center">
-          <ButtonWithProgress
-            onClick={this.onClickSignUp}
-            disabled={
-              this.state.pendingApiSubmitCall ||
-              !this.state.passwordRepeatConfirmed
-            }
-            text="Sign up"
-            pendingApiCall={this.state.pendingApiSubmitCall}
-          />
+          <div className="text-center">
+            <ButtonWithProgress
+              onClick={this.onClickSignUp}
+              disabled={
+                this.state.pendingApiSubmitCall ||
+                !this.state.passwordRepeatConfirmed
+              }
+              text="Sign up"
+              pendingApiCall={this.state.pendingApiSubmitCall}
+            />
+          </div>
         </div>
       </div>
     );

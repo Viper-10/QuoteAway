@@ -23,9 +23,7 @@ class QuoteView extends Component {
           />
           <div className="flex-fill m-auto ps-2">
             <Link to={`/${username}`} className="list-group-item-action">
-              <h6 className="d-inline">
-                {displayName}@{username}
-              </h6>
+              <h6 className="d-inline">{displayName}</h6>
             </Link>
             <span className="text-black-50"> - </span>
             <span className="text-black-50">{relativeDate}</span>

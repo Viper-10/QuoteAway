@@ -3,6 +3,7 @@ import logo from "../assets/QuoteAway2.png";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import ProfileImageWithDefault from "./ProfileImageWithDefault";
+import "../App.css";
 
 class TopBar extends React.Component {
   state = {
@@ -53,14 +54,14 @@ class TopBar extends React.Component {
 
   render() {
     let links = (
-      <ul className="nav navbar-nav ms-auto">
+      <ul className="nav navbar-nav ms-auto ">
         <li className="nav-item">
-          <Link to="/signup" className="nav-link">
+          <Link to="/signup" className="nav-link text-light">
             Sign Up
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/login" className="nav-link">
+          <Link to="/login" className="nav-link text-light">
             Login
           </Link>
         </li>
@@ -79,14 +80,14 @@ class TopBar extends React.Component {
               style={{ cursor: "pointer" }}
               onClick={this.onClickDisplayName}
             >
-              <ProfileImageWithDefault
-                className="rounded-circle m-auto"
-                width="32"
-                height="32"
-                image={this.props.user.image}
-              />
-              <span className="nav-link dropdown-toggle">
-                {this.props.user.displayName}
+              <span className="nav-link dropdown-toggle text-light">
+                <ProfileImageWithDefault
+                  className="rounded-circle m-auto"
+                  width="32"
+                  height="32"
+                  image={this.props.user.image}
+                />
+                <span className="ps-2">{this.props.user.displayName}</span>
               </span>
             </div>
             <div className={dropDownClass} data-testid="drop-down-menu">
