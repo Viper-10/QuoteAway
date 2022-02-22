@@ -54,8 +54,8 @@ export class LoginPage extends React.Component {
     return (
       <div className="container">
         <div className="login-signup-container">
-          <h1 className="text-center">Login</h1>
-          <div className="col-12 mb-3">
+          <h1 className="text-center ">Login</h1>
+          <div className="col-12 mb-3 ">
             <Input
               label="Username :"
               placeholder="Your username"
@@ -82,6 +82,7 @@ export class LoginPage extends React.Component {
               onClick={this.onClickLogin}
               disabled={disableLogin || this.state.pendingApiCall}
               text="Login"
+              className="btn bg-primary-colour"
               pendingApiCall={this.state.pendingApiCall}
             />
           </div>

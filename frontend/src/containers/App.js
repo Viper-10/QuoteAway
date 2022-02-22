@@ -17,7 +17,7 @@ import TopBar from "../components/TopBar";
 function App() {
   return (
     <div className="main-page-colour">
-      <div className=" topbar-colour">
+      <div className=" bg-primary-colour">
         <TopBar />
       </div>
       <div className="container ">

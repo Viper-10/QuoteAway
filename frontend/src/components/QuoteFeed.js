@@ -115,7 +115,7 @@ class QuoteFeed extends Component {
       this.state.newQuoteCount === 0
     ) {
       return (
-        <div className="card card-header text-center pop-up-message">
+        <div className="card card-header text-center pop-up-message bg-antiquewhite">
           There are no quotes
         </div>
       );
@@ -149,7 +149,7 @@ class QuoteFeed extends Component {
         })}
         {this.state.page.last === false && (
           <div
-            className="card card-header text-center pop-up-message"
+            className="card card-header text-center pop-up-message bg-antiquewhite"
             onClick={this.onClickLoadMore}
             style={{
               cursor: this.state.isLoadingOldQuotes ? "not-allowed" : "pointer",

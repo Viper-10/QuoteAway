@@ -56,7 +56,7 @@ class TopBar extends React.Component {
     let links = (
       <ul className="nav navbar-nav ms-auto ">
         <li className="nav-item">
-          <Link to="/signup" className="nav-link text-light">
+          <Link to="/signup" className="nav-link text-light bg-primary-color ">
             Sign Up
           </Link>
         </li>

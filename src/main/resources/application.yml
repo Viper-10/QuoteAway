@@ -48,10 +48,10 @@ spring :
 spring : 
   profiles : dev
   datasource : 
-    url : jdbc:mysql://quoteawaydb.c3d8eiyybyiy.us-east-2.rds.amazonaws.com:3306/QuoteAway
-    username : Viper_10
-#    url : jdbc:mysql://localhost:3306/quoteawaydb
-#    username : root
+#    url : jdbc:mysql://quoteawaydb.c3d8eiyybyiy.us-east-2.rds.amazonaws.com:3306/QuoteAway
+#    username : Viper_10
+    url : jdbc:mysql://localhost:3306/quoteawaydb
+    username : root
     password : Win32dll$
   jpa:
     hibernate:

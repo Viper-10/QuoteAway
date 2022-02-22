@@ -37,8 +37,21 @@
   }
 }
 /* App.js */
-.topbar-colour {
+.bg-secondary-colour {
+  background-color: #f8fafd;
+}
+
+.bg-primary-colour {
   background-color: #353942;
+  color: white;
+}
+
+.btn.bg-primary-colour:hover {
+  background-color: antiquewhite;
+}
+.bg-antiquewhite {
+  background-color: antiquewhite;
+  /* background-color: azure; */
 }
 
 /* Top bar */
@@ -51,7 +64,6 @@
 
 /* Home page*/
 .pop-up-message {
-  background-color: antiquewhite;
   text-align: center;
   padding-top: 2.5vh;
   padding-bottom: 2.5vh;
@@ -61,6 +73,11 @@
 .main-page-colour {
   background-color: #f8fafd;
   height: 100%;
+}
+
+.poppins-font {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
 }
 
 /* Login and signup Page */

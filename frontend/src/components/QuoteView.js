@@ -38,7 +38,7 @@ class QuoteView extends Component {
             </button>
           )}
         </div>
-        <div className="ps-5">{quote.content}</div>
+        <div className="ps-5 poppins-font">{quote.content}</div>
       </div>
     );
   }
