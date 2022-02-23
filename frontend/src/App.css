@@ -7,6 +7,9 @@
   pointer-events: none;
 }
 
+/* primary colour #ffd74A */
+/* primary dark #ab9032*/
+/* #2b2b2b*/
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
