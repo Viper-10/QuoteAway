@@ -10,11 +10,9 @@ const Input = ({
   onChange,
 }) => {
   let inputClassName = "form-control";
-
   if (type === "file") {
     inputClassName += "-file";
   }
-
   if (hasError !== undefined) {
     inputClassName += hasError === true ? " is-invalid" : " is-valid";
   }

@@ -1,0 +1,32 @@
+.bg-primary-yellow {
+  background-color: #ffdf00;
+}
+.bg-secondary-black {
+  background-color: black;
+  color: white;
+}
+.btn-black {
+  padding: 0.5rem 0.8rem;
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+}
+.btn-black:hover {
+  background-color: rgb(216, 190, 20);
+  color: black;
+}
+.flex-row-between {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.small-text {
+  font-size: 0.8rem;
+}
+
+.form-container {
+  max-width: 400px;
+  margin: auto;
+  background-color: #fff;
+}

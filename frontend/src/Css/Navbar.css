@@ -1,0 +1,26 @@
+.my-navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+.my-navbar ul {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+}
+.my-navbar li {
+  list-style: none;
+  padding: 0.8rem;
+  color: white;
+}
+
+.my-navbar li:hover {
+  border-bottom: 5px solid #ffdf00;
+  color: #ffdf00;
+}
+.my-navbar a {
+  text-decoration: none;
+  padding: 0;
+  color: inherit;
+}

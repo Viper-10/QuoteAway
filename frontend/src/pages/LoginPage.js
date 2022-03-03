@@ -4,6 +4,8 @@ import Input from "../components/Input";
 import { connect } from "react-redux";
 import * as authActions from "../Redux/authActions";
 import "../App.css";
+import "../Css/login.css";
+import { Link } from "react-router-dom";
 export class LoginPage extends React.Component {
   state = {
     username: "",
@@ -52,40 +54,88 @@ export class LoginPage extends React.Component {
       disableLogin = true;
     }
     return (
-      <div className="container">
-        <div className="login-signup-container">
-          <h1 className="text-center ">Login</h1>
-          <div className="col-12 mb-3 ">
-            <Input
-              label="Username :"
-              placeholder="Your username"
-              onChange={this.onChangeUserName}
-            />
-          </div>
-          <div className="col-12 mb-3">
-            <Input
-              label="Password :"
-              placeholder="Your password"
-              type="password"
-              onChange={this.onChangePassword}
-            />
-          </div>
-          {this.state.apiError !== undefined && (
+      <div className="full-page-background">
+        <div className="container">
+          <div className="login-signup-container">
+            <h2 className="text-center ">Login</h2>
+            <div className="col-12 mb-3 ">
+              <Input
+                label="Username :"
+                placeholder="Your username"
+                onChange={this.onChangeUserName}
+              />
+            </div>
             <div className="col-12 mb-3">
-              <div className="alert alert-danger" role="alert">
-                {this.state.apiError}
+              <Input
+                label="Password :"
+                placeholder="Your password"
+                type="password"
+                onChange={this.onChangePassword}
+              />
+            </div>
+            {this.state.apiError !== undefined && (
+              <div className="col-12 mb-3">
+                <div className="alert alert-danger" role="alert">
+                  {this.state.apiError}
+                </div>
+              </div>
+            )}
+            <div className="flex-row-between text-center">
+              <ButtonWithProgress
+                onClick={this.onClickLogin}
+                disabled={disableLogin || this.state.pendingApiCall}
+                text="Login"
+                className="btn-black"
+                pendingApiCall={this.state.pendingApiCall}
+              />
+              <div className="small-text">
+                Don't have an account?&nbsp;
+                <Link to="/signup" className="signup-link">
+                  Sign up
+                </Link>
               </div>
             </div>
-          )}
-          <div className="text-center">
-            <ButtonWithProgress
-              onClick={this.onClickLogin}
-              disabled={disableLogin || this.state.pendingApiCall}
-              text="Login"
-              className="btn bg-primary-colour"
-              pendingApiCall={this.state.pendingApiCall}
-            />
           </div>
+          {/* <div className="login-signup-container">
+            <h2 className="text-center ">Login</h2>
+            <div className="col-12 mb-3 ">
+              <Input
+                label="Username :"
+                placeholder="Your username"
+                onChange={this.onChangeUserName}
+              />
+            </div>
+            <div className="col-12 mb-3">
+              <Input
+                label="Password :"
+                placeholder="Your password"
+                type="password"
+                onChange={this.onChangePassword}
+              />
+            </div>
+            {this.state.apiError !== undefined && (
+              <div className="col-12 mb-3">
+                <div className="alert alert-danger" role="alert">
+                  {this.state.apiError}
+                </div>
+              </div>
+            )}
+            <div className="flex-row-between text-center">
+              <ButtonWithProgress
+                onClick={this.onClickLogin}
+                disabled={disableLogin || this.state.pendingApiCall}
+                text="Login"
+                className="btn-black"
+                pendingApiCall={this.state.pendingApiCall}
+              />
+              <div className="small-text">
+                Don't have an account?&nbsp;
+                <Link to="/signup" className="signup-link">
+                  Sign up
+                </Link>
+              </div>
+            </div>
+          </div> */}
         </div>
       </div>
     );

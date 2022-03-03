@@ -5,6 +5,8 @@ import LoginPage from "../pages/LoginPage";
 import UserSignUpPage from "../pages/UserSignUpPage";
 import UserPage from "../pages/UserPage";
 import TopBar from "../components/TopBar";
+import Navbar from "../components/Navbar";
+import "../Css/Utilities.css";
 
 /* 
   History is a part of the props provided by router
@@ -17,8 +19,10 @@ import TopBar from "../components/TopBar";
 function App() {
   return (
     <div className="main-page-colour">
-      <div className=" bg-primary-colour">
-        <TopBar />
+      {/* <div className=" bg-primary-colour"> */}
+      <div className="bg-secondary-black">
+        {/* <TopBar /> */}
+        <Navbar />
       </div>
       <div className="container ">
         <Switch>

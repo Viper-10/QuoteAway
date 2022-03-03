@@ -10,9 +10,9 @@ import { LoginPage } from "../pages/LoginPage";
 import { renderIntoDocument } from "react-dom/test-utils";
 describe("Login Page ", () => {
   describe("Layout", () => {
-    it("has a header h1 of Login", () => {
+    it("has a header h2 of Login", () => {
       const { container } = render(<LoginPage />);
-      const header = container.querySelector("h1");
+      const header = container.querySelector("h2");
       expect(header).toHaveTextContent("Login");
     });
 

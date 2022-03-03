@@ -1,0 +1,10 @@
+.signup-link {
+  color: black;
+}
+.signup-link:hover {
+  color: rgb(216, 190, 20);
+}
+.full-page-background {
+  background-color: #f8fafd;
+  min-height: 100vh;
+}

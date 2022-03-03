@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import ProfileImageWithDefault from "./ProfileImageWithDefault";
 import "../App.css";
+import "../Css/Navbar.css";
 
-class TopBar extends React.Component {
+class Navbar extends React.Component {
   state = {
     dropDownVisible: false,
   };
@@ -54,14 +55,14 @@ class TopBar extends React.Component {
 
   render() {
     let links = (
-      <ul className="nav navbar-nav ms-auto ">
-        <li className="nav-item">
-          <Link to="/signup" className="nav-link text-light bg-primary-color">
+      <ul>
+        <li>
+          <Link to="/signup" className="link">
             Sign Up
           </Link>
         </li>
-        <li className="nav-item">
-          <Link to="/login" className="nav-link text-light">
+        <li className="">
+          <Link to="/login" className="link">
             Login
           </Link>
         </li>
@@ -74,7 +75,7 @@ class TopBar extends React.Component {
       }
       links = (
         <ul className="nav navbar-nav ms-auto" ref={this.assignActionArea}>
-          <li className="nav-item dropdown">
+          <li className=" dropdown">
             <div
               className="d-flex"
               style={{ cursor: "pointer" }}
@@ -115,12 +116,16 @@ class TopBar extends React.Component {
     return (
       <div className="shadow-sm mb-2">
         <div className="container">
-          <nav className="navbar navbar-light navbar-expand">
-            <Link to="/" className="navbar-brand">
-              <img src={logo} width="60" alt="QuoteAway" />
-            </Link>
+          <div className="my-navbar">
+            <ul>
+              <li>
+                <Link to="/" className="link">
+                  QuoteAway
+                </Link>
+              </li>
+            </ul>
             {links}
-          </nav>
+          </div>
         </div>
       </div>
     );
@@ -133,4 +138,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(TopBar);
+export default connect(mapStateToProps)(Navbar);
