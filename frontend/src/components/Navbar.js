@@ -41,6 +41,7 @@ class Navbar extends React.Component {
       type: "logout-success",
     };
     this.props.dispatch(action);
+    window.location.href = "/";
   };
 
   onClickMyProfile = () => {
@@ -56,12 +57,12 @@ class Navbar extends React.Component {
   render() {
     let links = (
       <ul>
-        <li>
+        <li className="navbar-links">
           <Link to="/signup" className="link">
             Sign Up
           </Link>
         </li>
-        <li className="">
+        <li className="navbar-links">
           <Link to="/login" className="link">
             Login
           </Link>
@@ -74,51 +75,48 @@ class Navbar extends React.Component {
         dropDownClass += " show";
       }
       links = (
-        <ul className="nav navbar-nav ms-auto" ref={this.assignActionArea}>
-          <li className=" dropdown">
-            <div
-              className="d-flex"
-              style={{ cursor: "pointer" }}
-              onClick={this.onClickDisplayName}
-            >
-              <span className="nav-link dropdown-toggle text-light">
-                <ProfileImageWithDefault
-                  className="rounded-circle m-auto"
-                  width="32"
-                  height="32"
-                  image={this.props.user.image}
-                />
-                <span className="ps-2">{this.props.user.displayName}</span>
+        // have a ul
+        // have a li dropdown
+        <ul>
+          <li class="my-dropdown">
+            <ProfileImageWithDefault
+              className="rounded-circle m-auto"
+              width="32"
+              height="32"
+              image={this.props.user.image}
+            />
+            <button className="dropdown-link ps-2">
+              {this.props.user.displayName}
+              <span className="ps-2">
+                <i className="fas fa-angle-down" />
               </span>
-            </div>
-            <div className={dropDownClass} data-testid="drop-down-menu">
-              <Link
-                to={`/${this.props.user.username}`}
-                className="dropdown-item"
-                onClick={this.onClickMyProfile}
-              >
-                <i className="fas fa-user text-info"></i> My Profile
-              </Link>
-              <span
-                className="dropdown-item"
+            </button>
+
+            <div className="my-dropdown-menu">
+              <div className="my-dropdown-item">
+                <i className="fas fa-user"></i>
+                <Link to={`/${this.props.user.username}`}>My Profile</Link>
+              </div>
+              <div
+                className="my-dropdown-item"
                 onClick={this.onClickLogout}
                 style={{
                   cursor: "pointer",
                 }}
               >
                 <i className="fas fa-sign-out-alt text-danger"></i> Logout
-              </span>
+              </div>
             </div>
           </li>
         </ul>
       );
     }
     return (
-      <div className="shadow-sm mb-2">
+      <div className="shadow-sm mb-1">
         <div className="container">
           <div className="my-navbar">
             <ul>
-              <li>
+              <li className="navbar-links">
                 <Link to="/" className="link">
                   QuoteAway
                 </Link>
@@ -131,7 +129,11 @@ class Navbar extends React.Component {
     );
   }
 }
-
+Navbar.defaultProps = {
+  history: {
+    push: () => {},
+  },
+};
 const mapStateToProps = (state) => {
   return {
     user: state,

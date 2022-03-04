@@ -4,8 +4,10 @@ import Input from "../components/Input";
 import { connect } from "react-redux";
 import * as authActions from "../Redux/authActions";
 import "../App.css";
-import "../Css/login.css";
+import "../Css/Utilities.css";
+import MyInput from "../components/MyInput";
 import { Link } from "react-router-dom";
+import loginIcon from "../assets/login-icon.png";
 export class LoginPage extends React.Component {
   state = {
     username: "",
@@ -54,19 +56,23 @@ export class LoginPage extends React.Component {
       disableLogin = true;
     }
     return (
-      <div className="full-page-background">
-        <div className="container">
-          <div className="login-signup-container">
-            <h2 className="text-center ">Login</h2>
-            <div className="col-12 mb-3 ">
-              <Input
+      <div className="container">
+        <div className="form">
+          <div className="form-container">
+            <div className="form-header">
+              <img src={loginIcon} className="pt-3" />
+              <h2 className="mb-3">Login</h2>
+              <h4 className="mb-3">Hello User, Welcome Back!</h4>
+            </div>
+            <div className="mb-3 ">
+              <MyInput
                 label="Username :"
                 placeholder="Your username"
                 onChange={this.onChangeUserName}
               />
             </div>
-            <div className="col-12 mb-3">
-              <Input
+            <div className="mb-3">
+              <MyInput
                 label="Password :"
                 placeholder="Your password"
                 type="password"
@@ -74,29 +80,30 @@ export class LoginPage extends React.Component {
               />
             </div>
             {this.state.apiError !== undefined && (
-              <div className="col-12 mb-3">
+              <div className="mb-3">
                 <div className="alert alert-danger" role="alert">
                   {this.state.apiError}
                 </div>
               </div>
             )}
-            <div className="flex-row-between text-center">
+            <div className="flex-row-between text-center pb-3 flex-mobile-column">
               <ButtonWithProgress
                 onClick={this.onClickLogin}
                 disabled={disableLogin || this.state.pendingApiCall}
                 text="Login"
-                className="btn-black"
+                className="btn-yellow"
                 pendingApiCall={this.state.pendingApiCall}
               />
-              <div className="small-text">
+              <div className="footer-text">
                 Don't have an account?&nbsp;
-                <Link to="/signup" className="signup-link">
+                <Link to="/signup" className="form-link">
                   Sign up
                 </Link>
               </div>
             </div>
           </div>
-          {/* <div className="login-signup-container">
+        </div>
+        {/* <div className="login-signup-container">
             <h2 className="text-center ">Login</h2>
             <div className="col-12 mb-3 ">
               <Input
@@ -136,7 +143,6 @@ export class LoginPage extends React.Component {
               </div>
             </div>
           </div> */}
-        </div>
       </div>
     );
   }

@@ -18,8 +18,7 @@ import "../Css/Utilities.css";
 
 function App() {
   return (
-    <div className="main-page-colour">
-      {/* <div className=" bg-primary-colour"> */}
+    <div className="full-page-background">
       <div className="bg-secondary-black">
         {/* <TopBar /> */}
         <Navbar />

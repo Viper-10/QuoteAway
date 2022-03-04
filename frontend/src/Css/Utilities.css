@@ -1,3 +1,13 @@
+.form-link {
+  color: black;
+}
+.form-link:hover {
+  color: rgb(216, 190, 20);
+}
+.full-page-background {
+  background-color: #f8fafd;
+  min-height: 100vh;
+}
 .bg-primary-yellow {
   background-color: #ffdf00;
 }
@@ -6,14 +16,26 @@
   color: white;
 }
 .btn-black {
-  padding: 0.5rem 0.8rem;
+  padding: 0.5rem 0.5rem;
   background-color: black;
   color: white;
   border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.btn-yellow {
+  padding: 0.5rem 0.8rem;
+  background-color: rgb(216, 190, 20);
+  border-radius: 4px;
+  color: black;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.btn-yellow:hover {
+  color: white;
 }
 .btn-black:hover {
-  background-color: rgb(216, 190, 20);
-  color: black;
+  color: #ffdf00;
 }
 .flex-row-between {
   display: flex;
@@ -21,12 +43,34 @@
   justify-content: space-between;
   align-items: center;
 }
-.small-text {
+.footer-text {
   font-size: 0.8rem;
 }
 
-.form-container {
-  max-width: 400px;
+.form {
+  max-width: 700px;
   margin: auto;
-  background-color: #fff;
+  margin-top: 1rem;
+  background-color: #fffefd;
+  color: black;
+  border-radius: 6px;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+.form-container {
+  margin: 0 15%;
+}
+
+.form-header {
+  text-align: center;
+}
+@media (max-width: 600px) {
+  .flex-mobile-column {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .flex-mobile-column > * {
+    width: 100%;
+  }
 }

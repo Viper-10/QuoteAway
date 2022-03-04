@@ -90,14 +90,14 @@ class QuoteSubmit extends Component {
             {this.state.focused && (
               <div className="text-right mt-1">
                 <ButtonWithProgress
-                  className="btn btn-success"
+                  className="btn-yellow"
                   disabled={this.state.pendingApiCall}
                   onClick={this.onClickAddQuote}
                   pendingApiCall={this.state.pendingApiCall}
                   text="Add Quote"
                 />
                 <button
-                  className="btn btn-secondary ms-1"
+                  className="btn-black ms-2"
                   disabled={this.state.pendingApiCall}
                   onClick={this.onClickCancel}
                 >
